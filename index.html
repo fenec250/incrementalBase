@@ -1,0 +1,169 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <!-- Game Title: edit this -->
+    <title>Incremental</title>
+	  <!-- <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet"> -->
+    <link media="screen" rel="stylesheet" href="style.css">
+    <!-- <link media="screen" rel="stylesheet" href="node_modules/bootstrap/scss/bootstrap.scss"> -->
+    
+    <!-- Suppport for mobile devices. -->
+    <meta name="viewport" content="user-scalable=no, width=device-width">
+    <!-- <link rel="apple-touch-icon" href="media/img/iphone/icon.png">
+    <link rel="apple-touch-startup-image" href="media/img/iphone/splash.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"> -->
+  </head>
+  <body>
+
+    <div id="popup_group" onclick="exitEvent()" style="display: none;">
+      <div id="popup_content">
+      </div>
+    </div>
+
+    <div id="top_container">
+      <div id="determination" class="bar">
+        <div class="negative"></div>
+        <div class="fill"></div>
+        <div class="decay"></div>
+        <span class="text">
+          <span class="title"></span>
+        </span>
+        <div class="tooltip">
+          <div>
+            Your Determination is what keeps the
+            adventure together.
+            <br/>
+            You lose Determination when a Cycle
+            completes based on your Decay.
+            <br/>
+            When you run out the world will renew,
+            your Generation levels will reset to 0
+            and you will start again from the beginning.
+          </div>
+          <div class="amount"></div>
+          <div class="decay"></div>
+        </div>
+      </div>
+      <div id="cycle" class="bar">
+        <div class="fill"></div>
+        <div class="preview"></div>
+        <span class="text">
+          Cycle <span class="cycle"></span>: <span class="progress"></span>
+        </span>
+        <div class="tooltip">
+          <span class="description">
+            At the end of a cycle you lose Determination and gain levels
+          </span>
+        </div>
+      </div>
+    </div>
+    <hr/>
+
+    <div id="stats">
+      <div id="stats_container"></div>
+    </div>
+
+    <div id="page">
+
+      <div id="resources_panel" class="panel">
+        <!-- Game Background -->
+        <h1 align="center">Resources</h1>
+        <div id = "resources_container"></div>
+      </div>
+
+      <div id="actions_panel" class="panel">
+        <h1 align="center">Dangers</h1>
+        <div id="dangers_container"></div>
+      </div>
+
+      <div id="actions_panel" class="panel">
+        <h1 align="center">Actions</h1>
+        <div id="tasks_container"></div>
+      </div>
+
+      <div id="plan_panel" class="panel">
+        <button onclick="save()">Save</button>
+        <button onclick="load()">Load</button>
+      </div>
+      <div id="story_panel" class="panel">
+      </div>
+    </div> <!-- End of div.page -->
+
+    <!-- Holds UI elements that will be cloned and placed in the main page. This block itself is always hidden. -->
+    <div id="ui_library" style="display: none;">
+
+      <div id="danger_template" class="danger">
+        <div class="bar">
+          <div class="fill"></div>
+          <div class="prog"></div>
+        </div>
+        <span class="text">
+        </span>
+        <div class="tooltip">
+        </div>
+      </div>
+
+      <div id="task_template" class="task">
+        <div class="bar">
+          <div class="fill"></div>
+          <div class="prog"></div>
+        </div>
+        <div class="text">
+          <div class="title"></div>
+          <button class="button click" onclick="">></button>
+          <button class="button max" onclick="">x1</button>
+          <button class="button all" onclick="">>></button>
+        </div>
+        <div class="tooltip">
+          <div class="description"></div>
+          <div class="prog">Progress: <span class="amount"></span>/<span class="duration"></span></div>
+          <div class="ttc">Completes in <span></span> cycles</div>
+          <div class="cps">Completes <span></span> times per cycle</div>
+        </div>
+      </div>
+
+      <div id="resource_template" class="resource">
+        <span class="title">title</span>&nbsp;:&nbsp;<span class="amount">0</span>
+      </div>
+
+      <div id="stat_template" class="stat">
+        <div class="gen bar">
+          <div class="fill"></div>
+          <div class="sto"></div>
+        </div>
+        <div class="inst bar">
+          <div class="fill"></div>
+          <div class="sto"></div>
+        </div>
+        <span class="text">
+          <span class="title"></span> x<span class="speed">1.00</span> <span class="extra"></span>
+        </span>
+        <div class="tooltip">
+          <div class="description"></div>
+          <div>Level: <span class="lvl"></span></div>
+          <div>Gen. Level: <span class="glvl"></span></div>
+          <div>Exp.: <span class="exp"></span>/<span class="nexp"></span><span class="sto"> (+<span class="amount"></span>)</span></div>
+          <div>Gen. Exp.: <span class="gexp"></span>/<span class="ngexp"></span><span class="sto"> (+<span class="amount"></span>)</span></div>
+        </div>
+        <!-- level, genLevel, exp, genExp, nextLevelExp, nextGenLevelExp, -->
+      </div>
+
+      <hr id="turn_separator">
+    </div>
+
+    <!-- Libraries -->
+    <script type="text/javascript" src="util.js"></script>
+    <script type="text/javascript" src="display.js"></script>
+    <script type="text/javascript" src="load.js"></script>
+    <script type="text/javascript" src="run.js"></script>
+    <!-- Content -->
+    <!-- <script type="text/javascript" src="Test.js"></script> -->
+    <script>
+      initialTaskGroup = "test";
+      reset();
+    </script>
+
+  </body>
+</html>

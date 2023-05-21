@@ -1,0 +1,230 @@
+:root {
+    --color-det: hsl(240, 25%, 50%);
+    --color-det-light: hsl(240, 25%, 65%);
+    --color-cycle: hsl(300, 24%, 50%);
+    --color-cycle-light: hsl(300, 25%, 65%);
+    --color-run: hsl(51, 100%, 50%);
+    --color-background: 
+}
+
+body {
+    background: #272727;
+    /* background: #170804 url("../img/page_bg.jpg") repeat-x left top; */
+    /* background-attachment: fixed; */
+    /* font-family: Palatino, Times, "Times New Roman", serif; */
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 22px;
+    /* line-height: 1.6em; */
+    overflow-y: scroll;
+	color: #ffffff;
+}
+
+#page {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15em, 1fr));
+    /* flex-direction: row; */
+}
+
+.panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.panel.div{
+    display: flex;
+    flex-direction: row;
+}
+.panel.div.button{
+    align-items: end;
+}
+.bar{
+    height: 100%;
+    width: 100%;
+    background: gray;
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    margin: .1em;
+    position: relative;
+}
+.bar *{
+    height: 100%;
+}
+.text{
+    position: absolute;
+    left: .3em;
+}
+.border {
+    border: .1em solid var(--color-cycle);
+    border-radius: 2px;
+    box-shadow: 0 0 10px var(--color-cycle-light);
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+.tooltip {
+    visibility: hidden;
+    width: 36ch;
+    /* width: max(35em, 50%); */
+    height: fit-content;
+    background-color: #555;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    top: 125%;
+    left: 50%;
+    margin-left: -18ch;
+    /* margin-left: min(-17.5em, -25%); */
+    opacity: 0;
+    font-size: 12px;
+    transition: opacity 0.3s;
+    z-index: 1; /* show over regular elements */
+    pointer-events: none /* let clicks trough */
+}
+.tooltip::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -.5em;
+    border-width: .5em;
+    border-style: solid;
+    border-color: transparent transparent #555 transparent;
+}
+*:hover > .tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+#top_container {
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    width: 100%;
+    /* padding: 10px; */
+    align-items: center;
+    justify-content: center;
+
+    position: sticky;
+    top: 0;
+    z-index: 1; /* show over other parts*/
+    background-color: #272727;
+}
+#top_container .bar{
+    height: 1.5em;
+}
+#determination .negative{
+    background: var(--color-cycle);
+}
+#determination .fill{
+    background: var(--color-det);
+}
+#determination .decay{
+    background: var(--color-det-light);
+}
+#cycle .fill{
+    background: var(--color-cycle)
+}
+
+#tasks_container, #dangers_container, #resources_container {
+    display: flex;
+    flex-direction: column;
+}
+.task, .danger, .resource {
+    height: 1.5em;
+    display: flex;
+    /* flex-direction: row; */
+    align-items: center;
+    position: relative;
+}
+.task .bar, .danger .bar {
+    height: 1em;
+}
+.task .bar .fill {
+    background: var(--color-det);
+}
+.task .bar .prog{
+    background: var(--color-det-light);
+}
+.danger .bar .fill {
+    background: var(--color-cycle);
+}
+.danger .bar .prog {
+    background: var(--color-cycle-light);
+}
+.task .tooltip .prog, .danger .tooltip .prog {
+    /* background: var(--color-det-light); */
+    position: relative;
+    /* bottom: 1em; */
+    /* left: 2em; */
+}
+.task .text {
+    width: 100%;
+    display: flex;
+    justify-content:space-evenly;
+    align-items: stretch;
+}
+.task .button {
+    /* height: 1em; */
+}
+.task .buttonAll {
+    /* height: 1em; */
+}
+
+#stats_container {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(15em, 1fr));
+    /* flex-direction: row; */
+    /* flex-wrap: wrap; */
+}
+.stat {
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    min-width: 25%;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+}
+.stat .bar{
+    height: .5em;
+}
+.bar.gen{
+    height: .5em;
+    margin-bottom: 0;
+}
+.gen .fill{
+    background: var(--color-det);
+}
+.gen .sto{
+    background: var(--color-det-light);
+}
+.bar.inst{
+    margin-top: 0;
+    height: .5em;
+}
+.inst .fill{
+    background: var(--color-cycle);
+}
+.inst .sto{
+    background: var(--color-cycle-light);
+}
+
+
+#popup_group {
+    position: fixed;
+    background-color: hsla(0, 0%, 20%, 0.5);
+    width: 100lvw; height: 100lvh;
+    z-index: 9;
+}
+
+#popup_content {
+    position: fixed;
+    background-color: #555;
+    width: 50ch;
+    top: 20%; left: 50%; margin-left:-25ch;
+    z-index: 9;
+    border-radius: 10px;
+    padding: 10px;
+}
