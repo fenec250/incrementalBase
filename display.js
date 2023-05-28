@@ -6,12 +6,12 @@ function showTop() {
         detdiv.querySelector(".negative").style.width = "0%";
         detdiv.classList.remove("border");
     } else {
-        detdiv.querySelector(".negative").style.width = (det.decay-det.amount / det.max * 100) + "%";
+        detdiv.querySelector(".negative").style.width = ((det.decay - det.amount) / det.max * 100) + "%";
         detdiv.querySelector(".fill").style.width = "0%";
         detdiv.classList.add("border");
     }
     detdiv.querySelector(".bar .decay").style.width = ((Math.min(det.decay, det.amount) / det.max)*100) + "%"
-    detdiv.querySelector(".title").innerHTML = "Determination: " + det.amount.toPrecision(3) + " (-" + det.decay.toPrecision(3) + " per cycle)";
+    detdiv.querySelector(".title").innerHTML = "Determination: " + det.amount.toPrecision(3) +"/"+ det.max.toPrecision(3) + " (-" + det.decay.toPrecision(3) + " per cycle)";
     detdiv.querySelector(".tooltip .amount").innerHTML = det.amount.toPrecision(3);
     detdiv.querySelector(".tooltip .decay").innerHTML = det.decay.toPrecision(3);
     const cycdiv = document.getElementById("cycle");
@@ -70,24 +70,38 @@ function showStats() {
     }
 }
 
-function showResources() {
-    const resDiv = document.getElementById("resources_container");
-    resDiv.innerHTML = "";
-    const resTemplate = document.getElementById("resource_template");
-    const filteredResources = Object.entries(game.resources)
-        .filter(([,{hidden}]) => !hidden)
-        .map(([,r]) => r)
-        .sort((a,b) => a.order > b.order);
-    for (let resource of filteredResources) {
-        let resNode = resDiv.querySelector("#r_"+resource.id);
-        if (!resNode) {
-            resNode = resTemplate.cloneNode(true);
-            resDiv.appendChild(resNode);
-            resNode.id = "r_"+resource.id;
-            resNode.querySelector(".title").innerHTML = resource.title;
-        }
-        resNode.querySelector(".amount").innerHTML = resource.amount;
+function showEvents() {
+    const container = document.getElementById("events_container");
+    container.innerHTML = "";
+    const template = document.getElementById("event_template");
+    for (let event of Object.values(game.events)) {
+        let node = template.cloneNode(true);
+        container.appendChild(node);
+        node.id = "e_"+event.id;
+        node.querySelector(".title").innerHTML = event.title;
+        node.querySelector(".content").innerHTML = event.content;
+        node.style.display = event.hidden ? "none" : null;
+        node.querySelector(".content").style.display = event.collapse ? "none" : null;
     }
+}
+
+function showEvent(id) {
+    let vent = game.taskGroup.events[id];
+    game.currentEvent = vent;
+    vent.hidden = false;
+    // TODO: auto-collapse
+    //document.getElementById("popup_group").style.display = 'block';
+    //document.getElementById("popup_content").innerHTML = vent.content;
+    document.getElementById("e_"+id).style.display = null;
+}
+
+function collapseEvent(node, toggle=null) {
+    if (typeof(node)=="string") node = document.getElementById(node);
+    let parent = node.parentNode.parentNode;
+    if (toggle === null) toggle = !parent.querySelector(".content").style.display;
+
+    parent.querySelector(".content").style.display =
+    toggle ? "none" : null;
 }
 
 function showTasks() {
@@ -140,8 +154,8 @@ function showTaskBase(task, taskNode, init=false, progress=0) {
         taskNode.querySelector('.tooltip .cps span').innerHTML = (1/task.timeToComplete).toPrecision(3);
         taskNode.querySelector('.tooltip .ttc').style.display = 'none';
     }
-    
 }
+
 function showTaskButtons(task, taskNode, init=false) {
     if (init) {
         taskNode.querySelector(".button.click").onclick = () => queueTask(task.id);
@@ -191,11 +205,4 @@ function exitEvent() {
     document.getElementById("popup_group").style.display = 'none';
     if (typeof(game.currentEvent?.onExit) == "function")
         game.currentEvent.onExit();
-}
-
-function showEvent(id) {
-    let vent = game.taskGroup.events[id];
-    game.currentEvent = vent;
-    document.getElementById("popup_group").style.display = 'block';
-    document.getElementById("popup_content").innerHTML = vent.content;
 }

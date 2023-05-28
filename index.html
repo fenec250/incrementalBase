@@ -67,10 +67,9 @@
 
     <div id="page">
 
-      <div id="resources_panel" class="panel">
-        <!-- Game Background -->
-        <h1 align="center">Resources</h1>
-        <div id = "resources_container"></div>
+      <div id="events_panel" class="panel">
+        <h1 align="center">Events</h1>
+        <div id = "events_container"></div>
       </div>
 
       <div id="actions_panel" class="panel">
@@ -124,8 +123,8 @@
         </div>
       </div>
 
-      <div id="resource_template" class="resource">
-        <span class="title">title</span>&nbsp;:&nbsp;<span class="amount">0</span>
+      <div id="event_template" class="event">
+        <div><a class="title" onclick="collapseEvent(this)">title</a></div><div class="content"></div>
       </div>
 
       <div id="stat_template" class="stat">

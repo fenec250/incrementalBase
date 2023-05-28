@@ -4,6 +4,7 @@ var game = {
     tasks:{},
     dangers: {},
     determination: {base:0, max:0, amount: 0, decay: 0},
+    events: [],
 
     persistent: {},
     onResetList: [],
@@ -13,6 +14,7 @@ var game = {
     timeLeft: 1.0,
     cycleLength: 1,
     cycle: 0,
+    generation: 0,
     taskGroup: {}, // the current area/set of tasks
     
     lastTask: {}, // potato: for narration?
@@ -47,6 +49,10 @@ function loadTaskGroup(id) {
     // })
     game.dangers = Object.fromEntries(dangers.map(d => [d.id, d]));
 
+    const events = Object.entries(taskGroup.events)
+        .map(t => loadEvent(t))
+    game.events = Object.fromEntries(events.map(t => [t.id, t]));
+
     game.taskGroup = taskGroup;
 
     Object.values(game.tasks).forEach(refreshTaskSpeed)
@@ -55,8 +61,8 @@ function loadTaskGroup(id) {
         taskGroup.onLoad();
     showTop();
     showStats();
+    showEvents();
     showTasks();
-    showResources();
     showDangers();
 }
 
@@ -106,6 +112,26 @@ function stripResource({
     return {id, amount, hidden};
 }
 
+function loadEvent([id, {
+    title, content,
+    hidden=true, collapsed,
+    order=1000,
+}]) {
+    //console.log(content);
+    return ({
+    id, order, content,
+    title: title || id,
+    hidden: hidden || !title,
+    collapsed:false,
+    });
+}
+
+function stripEvent({
+    id, hidden, collapsed
+}) {
+    return {id, hidden, collapsed};
+}
+
 function loadTask ({
     id, title, description,
     order = 1000,
@@ -133,7 +159,8 @@ function stripTask({
 }
 
 function loadDanger({
-    id, text, tooltip,
+    id, title, description,
+    text, tooltip,
     order = 1000,
     isEnabled = () => true, // () => should show up
     onProgress = time => 0, // time => do things
@@ -142,7 +169,7 @@ function loadDanger({
     custom,
 }) {
     return ({
-    id, order, text, tooltip,
+    id, order, text:text || title, tooltip:tooltip || description,
     isEnabled, onProgress, onCycle, onDisplay,
     custom:{...custom},
     });
@@ -195,7 +222,7 @@ function load(id='quickSave') {
 
     showTop();
     showStats();
+    showEvents();
     showTasks();
-    showResources();
     showDangers();
 }

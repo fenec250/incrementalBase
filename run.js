@@ -36,7 +36,6 @@ function run(taskId, times=1) {
     showTop();
     showStats();
     showTasks();
-    showResources();
     showDangers();
     // if game.plan.lehgth > 0 game.currentTask = plan.un/shift() and re run()?
     runLock = false;
@@ -114,16 +113,13 @@ function reset() {
             game.stats[key].storedExp = 0;
         });
 
-        
-    // TODO: extract this to the story itself
-    let detBase = 100 + (game.persistent.bunny || 0)
-
     game = { ...game,
         //stats:{},
         resources:{},
         tasks:{},
         dangers: {},
-        determination: {base:detBase, max:detBase, amount:detBase, decay: 2},
+        determination: {base:0, max:0, amount:0, decay: 0},
+        events: [],
         
         currentTask: null,
         activeDangers: [],
@@ -134,6 +130,7 @@ function reset() {
 
         //longPlan: [], // potato: [[{},... tasks for hour],...]
     }
+    game.generation += 1;
     loadTaskGroup(initialTaskGroup);
     
     game.activeDangers = Object.values(game.dangers).filter(({isEnabled}) => isEnabled());
@@ -141,7 +138,7 @@ function reset() {
 
     showTop();
     showStats();
+    showEvents();
     showTasks();
-    showResources();
     showDangers()
 }
