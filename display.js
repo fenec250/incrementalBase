@@ -92,7 +92,8 @@ function showEvent(id) {
     // TODO: auto-collapse
     //document.getElementById("popup_group").style.display = 'block';
     //document.getElementById("popup_content").innerHTML = vent.content;
-    document.getElementById("e_"+id).style.display = null;
+    if(!!document.getElementById("e_"+id))
+        document.getElementById("e_"+id).style.display = null;
 }
 
 function collapseEvent(node, toggle=null) {
@@ -145,14 +146,28 @@ function showTaskBase(task, taskNode, init=false, progress=0) {
     taskNode.querySelector('.tooltip .prog .amount').innerHTML = task.progress.toPrecision(3);
     taskNode.querySelector('.tooltip .prog .duration').innerHTML = task.baseDuration.toPrecision(3);
 
-    if (task.timeToComplete > 1) {
-        taskNode.querySelector('.tooltip .ttc').style.display = 'block';
-        taskNode.querySelector('.tooltip .ttc span').innerHTML = task.timeToComplete.toPrecision(3);
-        taskNode.querySelector('.tooltip .cps').style.display = 'none';
+    taskNode.querySelector('.tooltip .speed .val').innerHTML =
+        task.speed.toPrecision(3);
+    taskNode.querySelector('.tooltip .speed .scaling').innerHTML =
+        task.statsScaling.filter(([,p]) => !!p).length > 0
+        ? " based on " + task.statsScaling
+            .filter(([,p]) => !!p).map(([s]) => game.stats[s].title)
+            .reduce((a,b) => a + ", " + b)
+        : ""
+    if (!!task.boost)
+        taskNode.querySelector('.tooltip .speed .boost').innerHTML =
+            (task.boost > 0 ? " boosted by " : " slowed by ")
+            + speed(task.boost).toPrecision(3)
+
+    if (task.timeToComplete > 100) {
+        taskNode.querySelector('.tooltip .ttc span').innerHTML =
+            "in "+(task.timeToComplete/100).toPrecision(3)+" cycles"
+            +" ("+((task.baseDuration-task.progress)/task.speed/100).toPrecision(3)+" left)";
+    } else if (task.timeToComplete == 0) {
+        taskNode.querySelector('.tooltip .ttc span').innerHTML = "instantly";
     } else {
-        taskNode.querySelector('.tooltip .cps').style.display = 'block';
-        taskNode.querySelector('.tooltip .cps span').innerHTML = (1/task.timeToComplete).toPrecision(3);
-        taskNode.querySelector('.tooltip .ttc').style.display = 'none';
+        taskNode.querySelector('.tooltip .ttc span').innerHTML =
+            (100/task.timeToComplete).toPrecision(3) + " times per cycle";
     }
 }
 
