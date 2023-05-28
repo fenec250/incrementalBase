@@ -36,10 +36,10 @@ function loadTaskGroup(id) {
         .map(r =>  game.resources.hasOwnProperty(r.id) ? game.resources[r.id] : loadResource(r))
     game.resources = Object.fromEntries(resources.map(r => [r.id, r]));
 
-    const dangers = taskGroup.dangers
+    const dangers = Object.entries(taskGroup.dangers)
         .map(d => loadDanger(d))
 
-    const tasks = taskGroup.tasks
+    const tasks = Object.entries(taskGroup.tasks)
         .map(t => loadTask(t))
     game.tasks = Object.fromEntries(tasks.map(t => [t.id, t]));
     // dangers.filter(d => !!d.task)
@@ -56,14 +56,14 @@ function loadTaskGroup(id) {
     game.taskGroup = taskGroup;
 
     Object.values(game.tasks).forEach(refreshTaskSpeed)
-
-    if (typeof(taskGroup.onLoad) == 'function')
-        taskGroup.onLoad();
     showTop();
     showStats();
     showEvents();
     showTasks();
     showDangers();
+
+    if (typeof(taskGroup.onLoad) == 'function')
+        taskGroup.onLoad();
 }
 
 function loadStat({
@@ -122,7 +122,7 @@ function loadEvent([id, {
     id, order, content,
     title: title || id,
     hidden: hidden || !title,
-    collapsed:false,
+    collapsed: collapsed || false,
     });
 }
 
@@ -132,8 +132,8 @@ function stripEvent({
     return {id, hidden, collapsed};
 }
 
-function loadTask ({
-    id, title, description,
+function loadTask ([id,{
+    title, description,
     order = 1000,
     baseDuration = 0.0, // 1 = 1 hour, accelerated by stats
     statsScaling = [], // [["stat", 1.0], ...] number as exponent?
@@ -141,10 +141,12 @@ function loadTask ({
     isEnabled = () => true, // {context} => should show up
     onCompletion = () => true, // {context} => can be completed
     maxCompletion = task => Number.POSITIVE_INFINITY, // this => max that can be completed
-}) {
+}]) {
     return ({
-    id, title, description, order, baseDuration, boost, statsScaling,
+    id, title, description, order, baseDuration, boost,
     isEnabled, onCompletion, maxCompletion,
+    statsScaling:statsScaling.map(([s, p=1, e]) =>
+    [s, p, typeof(e) === 'undefined' ? p : +e]),
     progress:0,
     });
 }
@@ -158,8 +160,8 @@ function stripTask({
     };
 }
 
-function loadDanger({
-    id, title, description,
+function loadDanger([id, {
+    title, description,
     text, tooltip,
     order = 1000,
     isEnabled = () => true, // () => should show up
@@ -167,7 +169,7 @@ function loadDanger({
     onCycle = () => true, // () => do things
     onDisplay = node => true, // () => do things
     custom,
-}) {
+}]) {
     return ({
     id, order, text:text || title, tooltip:tooltip || description,
     isEnabled, onProgress, onCycle, onDisplay,
@@ -190,6 +192,7 @@ function save(id='quickSave') {
         determination: game.determination,
 
         persistent: game.persistent,
+        generation: game.generation,
         
         currentTask: game.currentTask?.id,
         timeLeft: game.timeLeft,

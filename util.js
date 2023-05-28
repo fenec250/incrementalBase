@@ -19,7 +19,7 @@ function statSpeed(stat) {
 
 function refreshTaskSpeed(task) {
     task.speedLevel = task.statsScaling
-        .map(([s, p=1]) => [game.stats[s] || {level:0,genLevel:0}, p])
+        .map(([s, p]) => [game.stats[s] || {level:0,genLevel:0}, p])
         .map(([s, p]) => (s.level + s.genLevel*4)*p)
         .reduce((total, v) => total + v, 0)
         + task.boost;

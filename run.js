@@ -92,11 +92,11 @@ function endCycle() {
 function storeExp(statsScaling, exp) {
     let expShares = statsScaling
         .filter(([s]) => game.stats.hasOwnProperty(s))
-        .map(([, p=1, e]) => typeof(e) === 'undefined' ? p : +e)
+        .map(([,,e]) => +e)
         .reduce((total, v) => total + v, 0);
     if (expShares <= 0) return;
     //console.log("exp is " + exp + "  exp pow is " + game.currentTask.speedLevel)
-    for (var [s, p=1, e] of statsScaling) {
+    for (var [s,,e] of statsScaling) {
         if (!game.stats.hasOwnProperty(s))
             continue;
         game.stats[s].storedExp += exp * Math.max(typeof(e) === 'undefined' ? p : +e, 0)/expShares;
