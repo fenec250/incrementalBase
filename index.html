@@ -24,9 +24,9 @@
 
     <div id="top_container">
       <div id="determination" class="bar">
-        <div class="negative"></div>
         <div class="fill"></div>
         <div class="decay"></div>
+        <div class="negative"></div>
         <span class="text">
           <span class="title"></span>
         </span>
@@ -83,8 +83,9 @@
       </div>
 
       <div id="plan_panel" class="panel">
-        <button onclick="save()">Save</button>
-        <button onclick="load()">Load</button>
+        <input type="text"/>
+        <button onclick="save(document.querySelector('#plan_panel input').value)">Save</button>
+        <button onclick="load(document.querySelector('#plan_panel input').value)">Load</button>
       </div>
       <div id="story_panel" class="panel">
       </div>
@@ -118,9 +119,12 @@
         <div class="tooltip">
           <div class="description"></div>
           <br>
-          <div class="speed">Speed: x<span class="val"></span><span class="scaling"></span><span class="boost"></span></div>
+          <div class="speed">Speed x<span class="val"></span><span class="scaling"> based on <span class="sval"></span></span></div>
+          <div class="boost">Experience x<span class="val"></span></div>
           <div class="prog">Progress: <span class="amount"></span>/<span class="duration"></span></div>
-          <div class="ttc">Completes <span></span></div>
+          <div class="ttc">Completes in <span class="val"></span> cycles (<span class="left"></span> left)</div>
+          <div class="ttcf">Completes <span></span> times per cycle</div>
+          <div class="ttci">Completes instantly</div>
         </div>
       </div>
 

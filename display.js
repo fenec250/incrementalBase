@@ -1,19 +1,22 @@
 function showTop() {
     const detdiv = document.getElementById("determination");
-    var det = game.determination
-    if (det.amount > det.decay) {
-        detdiv.querySelector(".fill").style.width = ((det.amount - det.decay) / det.max * 100) + "%";
+    let decay = game.determination.decay
+    let amount = game.determination.amount
+    let max = game.determination.max
+    if (amount > decay) {
+        detdiv.querySelector(".fill").style.width = ((amount - decay) / max * 100) + "%";
         detdiv.querySelector(".negative").style.width = "0%";
         detdiv.classList.remove("border");
     } else {
-        detdiv.querySelector(".negative").style.width = ((det.decay - det.amount) / det.max * 100) + "%";
+        detdiv.querySelector(".negative").style.width = ((decay - amount) / max * 100) + "%";
         detdiv.querySelector(".fill").style.width = "0%";
         detdiv.classList.add("border");
     }
-    detdiv.querySelector(".bar .decay").style.width = ((Math.min(det.decay, det.amount) / det.max)*100) + "%"
-    detdiv.querySelector(".title").innerHTML = "Determination: " + det.amount.toPrecision(3) +"/"+ det.max.toPrecision(3) + " (-" + det.decay.toPrecision(3) + " per cycle)";
-    detdiv.querySelector(".tooltip .amount").innerHTML = det.amount.toPrecision(3);
-    detdiv.querySelector(".tooltip .decay").innerHTML = det.decay.toPrecision(3);
+    //detdiv.querySelector(".bar .decay").style.width = ((Math.min(decay, amount*2-decay) / max)*100) + "%"
+    detdiv.querySelector(".bar .decay").style.width = ((Math.min(decay, amount) / max)*100) + "%"
+    detdiv.querySelector(".title").innerHTML = "Determination: " + amount.toPrecision(3) +"/"+ max.toPrecision(3) + " (-" + decay.toPrecision(3) + " per cycle)";
+    detdiv.querySelector(".tooltip .amount").innerHTML = amount.toPrecision(3);
+    detdiv.querySelector(".tooltip .decay").innerHTML = decay.toPrecision(3);
     const cycdiv = document.getElementById("cycle");
     cycdiv.querySelector(".fill").style.width = (100-(game.timeLeft / game.cycleLength)*100) + "%"
     cycdiv.querySelector(".cycle").innerHTML = game.cycle;
@@ -125,8 +128,6 @@ function showTasks() {
             if (!!task.description) {
                 taskNode.querySelector(".tooltip .description").innerHTML = task.description;
             }
-            taskNode.querySelector(".button.click").onclick = () => queueTask(task.id);
-            taskNode.querySelector(".button.all").onclick = () => queueTask(task.id, Number.POSITIVE_INFINITY);
         }
         showTaskBase(task, taskNode, init, game.timeLeft*task.speed/task.baseDuration);
         showTaskButtons(task, taskNode, init);
@@ -148,40 +149,52 @@ function showTaskBase(task, taskNode, init=false, progress=0) {
 
     taskNode.querySelector('.tooltip .speed .val').innerHTML =
         task.speed.toPrecision(3);
-    taskNode.querySelector('.tooltip .speed .scaling').innerHTML =
-        task.statsScaling.filter(([,p]) => !!p).length > 0
-        ? " based on " + task.statsScaling
-            .filter(([,p]) => !!p).map(([s]) => game.stats[s].title)
-            .reduce((a,b) => a + ", " + b)
-        : ""
-    if (!!task.boost)
-        taskNode.querySelector('.tooltip .speed .boost').innerHTML =
-            (task.boost > 0 ? " boosted by " : " slowed by ")
-            + speed(task.boost).toPrecision(3)
+    let scalingVisible = task.statsScaling.filter(([,p]) => !!p).length > 0;
+    taskNode.querySelector('.tooltip .speed .scaling').style.display =
+        scalingVisible ? "" : "none"
+    if (scalingVisible)
+        taskNode.querySelector('.tooltip .speed .sval').innerHTML =
+            task.statsScaling
+                .filter(([,p]) => !!p).map(([s,p]) =>
+                    game.stats[s].title + (p==1 ? "":"^"+p.toPrecision(2)))
+                .reduce((a,b) => a + ", " + b);
 
+    taskNode.querySelector('.tooltip .boost').style.display =
+        task.speedLevel != taskSpeedLevel(task.id) ? "" : "none"
+    taskNode.querySelector('.tooltip .boost .val').innerHTML =
+        speed(task.speedLevel - taskSpeedLevel(task.id)).toPrecision(3)
+
+    taskNode.querySelector('.tooltip .ttci').style.display =
+        task.timeToComplete == 0 ? "" : "none";
+    taskNode.querySelector('.tooltip .ttc').style.display =
+        task.timeToComplete > 100 ? "" : "none";
+    taskNode.querySelector('.tooltip .ttcf span').style.display =
+        task.timeToComplete < 100 && task.timeToComplete != 0 ? "" : "none";
     if (task.timeToComplete > 100) {
-        taskNode.querySelector('.tooltip .ttc span').innerHTML =
-            "in "+(task.timeToComplete/100).toPrecision(3)+" cycles"
-            +" ("+((task.baseDuration-task.progress)/task.speed/100).toPrecision(3)+" left)";
-    } else if (task.timeToComplete == 0) {
-        taskNode.querySelector('.tooltip .ttc span').innerHTML = "instantly";
-    } else {
-        taskNode.querySelector('.tooltip .ttc span').innerHTML =
-            (100/task.timeToComplete).toPrecision(3) + " times per cycle";
+        taskNode.querySelector('.tooltip .ttc .val').innerHTML =
+            (task.timeToComplete/100).toPrecision(3);
+            taskNode.querySelector('.tooltip .ttc .left').innerHTML =
+            +((task.baseDuration-task.progress)/task.speed/100).toPrecision(3);
+    } else if (task.timeToComplete != 0) {
+        taskNode.querySelector('.tooltip .ttcf span').innerHTML =
+            (100/task.timeToComplete).toPrecision(3);
     }
 }
 
 function showTaskButtons(task, taskNode, init=false) {
     if (init) {
-        taskNode.querySelector(".button.click").onclick = () => queueTask(task.id);
-        taskNode.querySelector(".button.all").onclick = () => queueTask(task.id, Number.POSITIVE_INFINITY);
+        taskNode.querySelector(".button.click").onclick = (e) => queueTask(e, task.id);
+        taskNode.querySelector(".button.click").oncontextmenu = (e) => queueTask(e, task.id);
+        taskNode.querySelector(".button.all").onclick = (e) => queueTask(e, task.id, Number.POSITIVE_INFINITY);
+        taskNode.querySelector(".button.all").oncontextmenu = (e) => queueTask(e, task.id, Number.POSITIVE_INFINITY);
     }
     let maxCompletion = task.maxCompletion(task);
     taskNode.querySelector(".button.click").disabled = maxCompletion <= 0;
     taskNode.querySelector(".button.all").disabled = maxCompletion <= 0;
     let multiCompletion = Math.min(maxCompletion, ((task.progress+game.timeLeft*task.speed)/task.baseDuration)>>0);
     let ba = taskNode.querySelector(".button.max");
-    ba.onclick = () => queueTask(task.id, Math.max(multiCompletion,1));
+    ba.onclick = (e) => queueTask(e, task.id, Math.max(multiCompletion,1));
+    ba.oncontextmenu = (e) => queueTask(e, task.id, Math.max(multiCompletion,1));
     if (multiCompletion > 0) {
         ba.innerHTML = 'x' + (multiCompletion>=1000 ? multiCompletion.toPrecision(3) : multiCompletion);
         ba.disabled = false;
@@ -208,12 +221,16 @@ function showDangers() {
             dangerNode.querySelector('.tooltip').innerHTML = danger.tooltip;
         }
         danger.onDisplay(dangerNode);
-        //showTaskBase(task, dangerNode, init, game.cycleLength*task.speed/task.baseDuration);
     }
 }
 
-function queueTask(id, times=1) {
-    run(id, times);
+function queueTask(e, id, times=1) {
+    if (!e) var e = window.event;
+    var rightclick;
+    if (e.which) rightclick = (e.which == 3);
+    else if (e.button) rightclick = (e.button == 2);
+    run(id, times, rightclick);
+    return false;
 }
 
 function exitEvent() {

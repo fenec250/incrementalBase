@@ -1,6 +1,8 @@
+const TTC_CORRECTION = Number.EPSILON * 100
+const STOP_EARLY = TTC_CORRECTION * 100
 
 var runLock = false;
-function run(taskId, times=1) {
+function run(taskId, times=1, stopEarly=false) {
     if (runLock) return;
     runLock = true;
 
@@ -11,13 +13,15 @@ function run(taskId, times=1) {
     }
 
     // run active task and Dangers
-    const timeToComplete = Math.min(
+    const timeToComplete = Math.max(Math.min(
         // ...tasksToRun.map(task =>
         //     (task.baseDuration - task.progress) / task.speed),
-        (game.currentTask.baseDuration*times - game.currentTask.progress) / game.currentTask.speed,
+        game.currentTask.baseDuration == 0 ? 0 : Number.POSITIVE_INFINITY,
+        (game.currentTask.baseDuration*times - game.currentTask.progress)
+            / game.currentTask.speed + TTC_CORRECTION,
         game.timeLeft
-        );
-    //console.log(timeToComplete, game.timeLeft);
+        )-(stopEarly?STOP_EARLY:0), 0);
+    // console.log(timeToComplete, game.timeLeft);
     
     if (!!game.currentTask) {
         runTask(game.currentTask, timeToComplete);
@@ -131,6 +135,7 @@ function reset() {
         //longPlan: [], // potato: [[{},... tasks for hour],...]
     }
     game.generation += 1;
+    console.log("generation "+game.generation);
     loadTaskGroup(initialTaskGroup);
     
     game.activeDangers = Object.values(game.dangers).filter(({isEnabled}) => isEnabled());

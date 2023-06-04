@@ -17,12 +17,16 @@ function statSpeed(stat) {
     return speed(game.stats[stat].level+game.stats[stat].genLevel*4);
 }
 
+function taskSpeedLevel(id) {
+    return game.tasks[id].statsScaling
+    .map(([s, p]) => [game.stats[s] || {level:0,genLevel:0}, p])
+    .map(([s, p]) => (s.level + s.genLevel*4)*p)
+    .reduce((total, v) => total + v, 0)
+    + game.tasks[id].boost;
+}
+
 function refreshTaskSpeed(task) {
-    task.speedLevel = task.statsScaling
-        .map(([s, p]) => [game.stats[s] || {level:0,genLevel:0}, p])
-        .map(([s, p]) => (s.level + s.genLevel*4)*p)
-        .reduce((total, v) => total + v, 0)
-        + task.boost;
+    task.speedLevel = task.getSpeedLevel();
     task.speed = speed(task.speedLevel);
     task.timeToComplete = task.baseDuration/task.speed;
     //console.log(task.id, task.speed, task.statsScaling);

@@ -33,8 +33,8 @@ function loadTaskGroup(id) {
     game.stats = Object.fromEntries(stats.map(s => [s.id, s]));
 
     const resources = taskGroup.resources
-        .map(r =>  game.resources.hasOwnProperty(r.id) ? game.resources[r.id] : loadResource(r))
-    game.resources = Object.fromEntries(resources.map(r => [r.id, r]));
+        .map(r =>  [r.id, game.resources.hasOwnProperty(r.id) ? game.resources[r.id] : r.initial||0])
+    game.resources = Object.fromEntries(resources);
 
     const dangers = Object.entries(taskGroup.dangers)
         .map(d => loadDanger(d))
@@ -93,25 +93,6 @@ function stripStat({
     };
 }
 
-function loadResource({
-    id, title,
-    initial=0,
-    hidden=false,
-    order=1000,
-}) {
-    return ({
-    id, title, order,
-    hidden:hidden || !title,
-    amount:initial,
-    });
-}
-
-function stripResource({
-    id, amount, hidden
-}) {
-    return {id, amount, hidden};
-}
-
 function loadEvent([id, {
     title, content,
     hidden=true, collapsed,
@@ -136,15 +117,16 @@ function loadTask ([id,{
     title, description,
     order = 1000,
     baseDuration = 0.0, // 1 = 1 hour, accelerated by stats
-    statsScaling = [], // [["stat", 1.0], ...] number as exponent?
+    statsScaling = [], // [["stat", power:1.0, expWeigth:1.0], ...]
     boost = 0, // speed level modifier. +64 => x2.0
+    getSpeedLevel = () => taskSpeedLevel(id), // {this task} => speed
     isEnabled = () => true, // {context} => should show up
     onCompletion = () => true, // {context} => can be completed
     maxCompletion = task => Number.POSITIVE_INFINITY, // this => max that can be completed
 }]) {
     return ({
     id, title, description, order, baseDuration, boost,
-    isEnabled, onCompletion, maxCompletion,
+    getSpeedLevel, isEnabled, onCompletion, maxCompletion,
     statsScaling:statsScaling.map(([s, p=1, e]) =>
     [s, p, typeof(e) === 'undefined' ? p : +e]),
     progress:0,
@@ -186,7 +168,7 @@ function stripDanger({
 function save(id='quickSave') {
     let save = {
         stats: Object.values(game.stats).map(stripStat),
-        resources: Object.values(game.resources).map(stripResource),
+        resources: Object.entries(game.resources),
         tasks: Object.values(game.tasks).map(stripTask),
         dangers: Object.values(game.dangers).map(stripDanger),
         determination: game.determination,
@@ -200,20 +182,20 @@ function save(id='quickSave') {
         cycle: game.cycle,
         taskGroup: game.taskGroup.id,
     };
-    console.log("saving: ", save);
-    localStorage.setItem(id, JSON.stringify(save));
+    console.log("saving "+id+": ", save);
+    localStorage.setItem("save_"+id, JSON.stringify(save));
 }
 
 function load(id='quickSave') {
-    let save = JSON.parse(localStorage.getItem(id));
-    console.log("loading: ", save);
+    let save = JSON.parse(localStorage.getItem("save_"+id));
+    console.log("loading "+id+": ", save);
     if (!save)
         return;
     game = {...game, ...save}; //probably breaks references?
     loadTaskGroup(save.taskGroup)
     //game = save;
     game.stats = Object.fromEntries(save.stats.map(s => [s.id, {...game.stats[s.id], ...s}]))
-    game.resources = Object.fromEntries(save.resources.map(s => [s.id, {...game.resources[s.id], ...s}]))
+    game.resources = Object.fromEntries(save.resources);
     game.tasks = Object.fromEntries(save.tasks.map(s => [s.id, {...game.tasks[s.id], ...s}]))
     game.dangers = Object.fromEntries(save.dangers.map(s => [s.id, {...game.dangers[s.id], ...s}]))
 
