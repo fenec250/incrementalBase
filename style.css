@@ -126,18 +126,18 @@ body {
     background: var(--color-cycle)
 }
 
-#tasks_container, #dangers_container, #resources_container {
+#tasks_container, #objectives_container, #resources_container {
     display: flex;
     flex-direction: column;
 }
-.task, .danger, .resource {
+.task, .objective, .resource {
     height: 1.5em;
     display: flex;
     /* flex-direction: row; */
     align-items: center;
     position: relative;
 }
-.task .bar, .danger .bar {
+.task .bar, .objective .bar {
     height: 1em;
 }
 .task .bar .fill {
@@ -146,13 +146,13 @@ body {
 .task .bar .prog{
     background: var(--color-det-light);
 }
-.danger .bar .fill {
+.objective .bar .fill {
     background: var(--color-cycle);
 }
-.danger .bar .prog {
+.objective .bar .prog {
     background: var(--color-cycle-light);
 }
-.task .tooltip .prog, .danger .tooltip .prog {
+.task .tooltip .prog, .objective .tooltip .prog {
     /* background: var(--color-det-light); */
     position: relative;
     /* bottom: 1em; */

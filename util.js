@@ -32,16 +32,7 @@ function refreshTaskSpeed(task) {
     //console.log(task.id, task.speed, task.statsScaling);
 }
 
-function resourceAmount(resource) {
-    return game.resources[resource].amount;
-}
-
 function heal(amount) {
     game.determination.amount = Math.min(
         game.determination.max, game.determination.amount + amount)
 }
-// function dangerCustom(d,c,v){
-//     if (v !== undefined)
-//         game.dangers[d].custom[c] = v;
-//     return game.dangers[d].custom[c];
-// }

@@ -201,26 +201,26 @@ function showTaskButtons(task, taskNode, init=false) {
     } else {ba.disabled = true;}
 }
 
-function showDangers() {
-    const dangersDiv = document.getElementById("dangers_container");
-    dangersDiv.innerHTML = "";
-    const dangerTemplate = document.getElementById("danger_template");
-    const filteredDangers = Object.entries(game.dangers)
+function showObjectives() {
+    const objectivesDiv = document.getElementById("objectives_container");
+    objectivesDiv.innerHTML = "";
+    const objectiveTemplate = document.getElementById("objective_template");
+    const filteredObjectives = Object.entries(game.objectives)
         .filter(([,{isEnabled}]) => isEnabled())
-        .map(([,danger]) => danger)
+        .map(([,o]) => o)
         .sort((a,b) => a.order > b.order);
-    for (let danger of filteredDangers) {
-        let dangerNode = document.getElementById("d_"+danger.id);
+    for (let objective of filteredObjectives) {
+        let node = document.getElementById("d_"+objective.id);
         let init = false;
-        if (!dangerNode) {
+        if (!node) {
             init = true;
-            dangerNode = dangerTemplate.cloneNode(true);
-            dangersDiv.appendChild(dangerNode);
-            dangerNode.id = "d_"+danger.id;
-            dangerNode.querySelector('.text').innerHTML = danger.text;
-            dangerNode.querySelector('.tooltip').innerHTML = danger.tooltip;
+            node = objectiveTemplate.cloneNode(true);
+            objectivesDiv.appendChild(node);
+            node.id = "d_"+objective.id;
+            node.querySelector('.text').innerHTML = objective.text;
+            node.querySelector('.tooltip').innerHTML = objective.tooltip;
         }
-        danger.onDisplay(dangerNode);
+        objective.onDisplay(node);
     }
 }
 

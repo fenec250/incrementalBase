@@ -2,7 +2,7 @@ var game = {
     stats:{},
     resources:{},
     tasks:{},
-    dangers: {},
+    objectives: {},
     determination: {base:0, max:0, amount: 0, decay: 0},
     events: [],
 
@@ -10,7 +10,6 @@ var game = {
     onResetList: [],
     
     currentTask: null,
-    activeDangers: [],
     timeLeft: 1.0,
     cycleLength: 1,
     cycle: 0,
@@ -36,18 +35,18 @@ function loadTaskGroup(id) {
         .map(r =>  [r.id, game.resources.hasOwnProperty(r.id) ? game.resources[r.id] : r.initial||0])
     game.resources = Object.fromEntries(resources);
 
-    const dangers = Object.entries(taskGroup.dangers)
-        .map(d => loadDanger(d))
+    const objectives = Object.entries(taskGroup.objectives)
+        .map(d => loadObjective(d))
 
     const tasks = Object.entries(taskGroup.tasks)
         .map(t => loadTask(t))
     game.tasks = Object.fromEntries(tasks.map(t => [t.id, t]));
-    // dangers.filter(d => !!d.task)
+    // objectives.filter(d => !!d.task)
     //     .forEach(d => {
     //         game.tasks[d.id] = loadTask({id:d.id, ...d.task})
     //         //console.log(d.id, d.task, game.tasks[d.id])
     // })
-    game.dangers = Object.fromEntries(dangers.map(d => [d.id, d]));
+    game.objectives = Object.fromEntries(objectives.map(d => [d.id, d]));
 
     const events = Object.entries(taskGroup.events)
         .map(t => loadEvent(t))
@@ -60,7 +59,7 @@ function loadTaskGroup(id) {
     showStats();
     showEvents();
     showTasks();
-    showDangers();
+    showObjectives();
 
     if (typeof(taskGroup.onLoad) == 'function')
         taskGroup.onLoad();
@@ -142,7 +141,7 @@ function stripTask({
     };
 }
 
-function loadDanger([id, {
+function loadObjective([id, {
     title, description,
     text, tooltip,
     order = 1000,
@@ -159,18 +158,11 @@ function loadDanger([id, {
     });
 }
 
-function stripDanger({
-    id, custom,
-}) {
-    return {id, custom};
-}
-
 function save(id='quickSave') {
     let save = {
         stats: Object.values(game.stats).map(stripStat),
         resources: Object.entries(game.resources),
         tasks: Object.values(game.tasks).map(stripTask),
-        dangers: Object.values(game.dangers).map(stripDanger),
         determination: game.determination,
 
         persistent: game.persistent,
@@ -197,17 +189,15 @@ function load(id='quickSave') {
     game.stats = Object.fromEntries(save.stats.map(s => [s.id, {...game.stats[s.id], ...s}]))
     game.resources = Object.fromEntries(save.resources);
     game.tasks = Object.fromEntries(save.tasks.map(s => [s.id, {...game.tasks[s.id], ...s}]))
-    game.dangers = Object.fromEntries(save.dangers.map(s => [s.id, {...game.dangers[s.id], ...s}]))
 
     if (!!save.currentTask)
         game.currentTask = game.tasks[save.currentTask];
     
-    //game.activeDangers = Object.values(game.dangers).filter(({isEnabled}) => isEnabled());
     Object.keys(game.tasks).forEach(key => refreshTaskSpeed(game.tasks[key]))
 
     showTop();
     showStats();
     showEvents();
     showTasks();
-    showDangers();
+    showObjectives();
 }

@@ -1,12 +1,9 @@
 
 
 
-- rework Dangers (rename to Ongoing?)
-- flexible UI for Dangers
 - events div/popup
 - rework reusing task/stats/resources to work with loading a save
 
-- is exp scaling out of control?
-- determination reset bonus
 - better UI cleanup than remaking it every time?
 - automation/plan system
+- generation recap

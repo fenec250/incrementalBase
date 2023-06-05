@@ -12,7 +12,7 @@ function run(taskId, times=1, stopEarly=false) {
         times = Math.min(times, game.currentTask.maxCompletion())
     }
 
-    // run active task and Dangers
+    // run active task
     const timeToComplete = Math.max(Math.min(
         // ...tasksToRun.map(task =>
         //     (task.baseDuration - task.progress) / task.speed),
@@ -27,7 +27,9 @@ function run(taskId, times=1, stopEarly=false) {
         runTask(game.currentTask, timeToComplete);
         storeExp(game.currentTask.statsScaling, timeToComplete * game.currentTask.speed);
     }
-    Object.values(game.dangers).filter(d => d.isEnabled()).forEach(d => d.onProgress(timeToComplete))
+
+    Object.values(game.objectives).filter(d => d.isEnabled())
+        .forEach(d => d.onProgress(timeToComplete))
 
     // cycle check
     game.timeLeft -= timeToComplete;
@@ -35,12 +37,10 @@ function run(taskId, times=1, stopEarly=false) {
         endCycle()
     }
 
-    //game.activeDangers = Object.values(game.dangers).filter(({isEnabled}) => isEnabled());
-
     showTop();
     showStats();
     showTasks();
-    showDangers();
+    showObjectives();
     // if game.plan.lehgth > 0 game.currentTask = plan.un/shift() and re run()?
     runLock = false;
 }
@@ -81,7 +81,8 @@ function endCycle() {
         s.speed = speed(s.level + s.genLevel*4)
     }
     game.determination.amount -= game.determination.decay;
-    Object.values(game.dangers).filter(d => d.isEnabled()).forEach(d => d.onCycle());
+    Object.values(game.objectives).filter(d => d.isEnabled())
+        .forEach(d => d.onCycle());
     if (game.determination.amount < 0) {
         reset();
     }
@@ -121,12 +122,11 @@ function reset() {
         //stats:{},
         resources:{},
         tasks:{},
-        dangers: {},
+        objectives: {},
         determination: {base:0, max:0, amount:0, decay: 0},
         events: [],
         
         currentTask: null,
-        activeDangers: [],
         taskGroup: {}, // the current area/set of tasks
         cycle:0,
         timeLeft: 100.0,
@@ -138,12 +138,11 @@ function reset() {
     console.log("generation "+game.generation);
     loadTaskGroup(initialTaskGroup);
     
-    game.activeDangers = Object.values(game.dangers).filter(({isEnabled}) => isEnabled());
     Object.keys(game.tasks).forEach(key => refreshTaskSpeed(game.tasks[key]))
 
     showTop();
     showStats();
     showEvents();
     showTasks();
-    showDangers()
+    showObjectives()
 }
