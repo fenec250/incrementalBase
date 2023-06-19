@@ -288,6 +288,17 @@ function queueTask(e, id, times=1) {
     return false;
 }
 
+function showPopup(id) {
+    let vent = game.taskGroup.events[id];
+    game.currentEvent = vent;
+    vent.hidden = false;
+    // TODO: auto-collapse
+    document.getElementById("popup_group").style.display = 'block';
+    document.getElementById("popup_content").innerHTML = vent.content;
+    // if(!!document.getElementById("e_"+id))
+    //     document.getElementById("e_"+id).style.display = null;
+}
+
 function exitEvent() {
     document.getElementById("popup_group").style.display = 'none';
     if (typeof(game.currentEvent?.onExit) == "function")
