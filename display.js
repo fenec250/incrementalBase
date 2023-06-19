@@ -175,6 +175,7 @@ function showTasks() {
         showTaskButtons(task, taskNode, init);
     }
 }
+
 function showTaskBase(task, taskNode, init=false, progress=0) {
     if (init) {
         taskNode.querySelector(".title").innerHTML = task.title;
@@ -184,14 +185,26 @@ function showTaskBase(task, taskNode, init=false, progress=0) {
     }
     let fill = task.progress/task.baseDuration;
     taskNode.querySelector('.bar .fill').style = "width: " + fill*100+"%";
-    let prog = Math.min(progress, 1-fill, task.maxCompletion());
+    let prog = task.baseDuration > 0 && Number.isFinite(task.baseDuration)
+        ? Math.min(progress, 1-fill, task.maxCompletion())
+        : task.maxCompletion() > 0;
     taskNode.querySelector('.bar .prog').style = "width: " + prog*100+"%";
-    taskNode.querySelector('.tooltip .prog .amount').innerHTML = task.progress.toPrecision(3);
-    taskNode.querySelector('.tooltip .prog .duration').innerHTML = task.baseDuration.toPrecision(3);
 
+    if (task.tags.length > 0) {
+        taskNode.querySelector(".text .icons").style.display = "";
+        taskNode.querySelector(".text .icons").innerHTML =
+        task.tags.reduce((a,b)=>a+b); // todo: translate via taskGroup
+    }
+    else
+        taskNode.querySelector(".text .icons").style.display = "none";
+
+    taskNode.querySelector('.tooltip .prog .amount').innerHTML = task.progress>=1
+        ? task.progress.toPrecision(3) : task.progress.toFixed(2);
+    taskNode.querySelector('.tooltip .prog .duration').innerHTML = task.baseDuration.toPrecision(3);
     taskNode.querySelector('.tooltip .speed .val').innerHTML =
         task.speed.toPrecision(3);
-    let scalingVisible = task.statsScaling.filter(([,p]) => !!p).length > 0;
+    let scalingVisible = task.statsScaling.filter(([,p]) => !!p).length > 0
+        && task.timeToComplete != 0;
     taskNode.querySelector('.tooltip .speed .scaling').style.display =
         scalingVisible ? "" : "none"
     if (scalingVisible)
@@ -200,9 +213,9 @@ function showTaskBase(task, taskNode, init=false, progress=0) {
                 .filter(([,p]) => !!p).map(([s,p]) =>
                     game.stats[s].title + (p==1 ? "":"^"+p.toPrecision(2)))
                 .reduce((a,b) => a + ", " + b);
-
     taskNode.querySelector('.tooltip .boost').style.display =
-        task.speedLevel != taskSpeedLevel(task.id) ? "" : "none"
+        (task.speedLevel != taskSpeedLevel(task.id)
+            && task.timeToComplete != 0) ? "" : "none"
     taskNode.querySelector('.tooltip .boost .val').innerHTML =
         speed(task.speedLevel - taskSpeedLevel(task.id)).toPrecision(3)
 
@@ -210,8 +223,8 @@ function showTaskBase(task, taskNode, init=false, progress=0) {
         task.timeToComplete == 0 ? "" : "none";
     taskNode.querySelector('.tooltip .ttc').style.display =
         task.timeToComplete > 100 ? "" : "none";
-    taskNode.querySelector('.tooltip .ttcf span').style.display =
-        task.timeToComplete < 100 && task.timeToComplete != 0 ? "" : "none";
+    taskNode.querySelector('.tooltip .ttcf').style.display =
+        (task.timeToComplete < 100 && task.timeToComplete != 0) ? "" : "none";
     if (task.timeToComplete > 100) {
         taskNode.querySelector('.tooltip .ttc .val').innerHTML =
             (task.timeToComplete/100).toPrecision(3);
