@@ -19,18 +19,44 @@ var game = {
     lastTask: {}, // potato: for narration?
     longPlan: [], // potato: [[{},... tasks for hour],...]
 }
-
-var taskGroups = {};
+var stats = [];
+var chapters = {};
 var initialTaskGroup; // to be  defined by the main HTML file
 
+function loadStats(stats) {
+    Object.entries(stats).map(loadStat);
+    showStats();
+}
+
+function loadStat([id, {
+    title,
+    order=1000,
+    level=0, genLevel=0,
+    exp=0, genExp=0,
+    nextLevelExp=100, nextGenLevelExp=100,
+    speed=1,
+}]) {
+    game.stats[id] = {
+    id, title, order, level, genLevel, exp, genExp, nextLevelExp, speed,
+    nextGenLevelExp,
+    storedExp: 0,
+    };
+}
+function stripStat({
+    id, level, genLevel, exp, genExp,
+    nextLevelExp, nextGenLevelExp,
+    storedExp, speed,
+}) {
+    return {
+        id, level, genLevel, exp, genExp,
+        nextLevelExp, nextGenLevelExp,
+        storedExp, speed,
+    };
+}
+
 function loadTaskGroup(id) {
-    let taskGroup = taskGroups[id];
+    let taskGroup = chapters[id];
     //console.log("load TG", id, taskGroup)
-
-    const stats = taskGroup.stats
-        .map(s => game.stats.hasOwnProperty(s.id) ? game.stats[s.id] : loadStat(s))
-    game.stats = Object.fromEntries(stats.map(s => [s.id, s]));
-
     const resources = taskGroup.resources
         .map(r =>  [r.id, game.resources.hasOwnProperty(r.id) ? game.resources[r.id] : r.initial||0])
     game.resources = Object.fromEntries(resources);
@@ -56,40 +82,12 @@ function loadTaskGroup(id) {
 
     Object.values(game.tasks).forEach(refreshTaskSpeed)
     showTop();
-    showStats();
     showEvents();
     showTasks();
     showObjectives();
 
     if (typeof(taskGroup.onLoad) == 'function')
         taskGroup.onLoad();
-}
-
-function loadStat({
-    id, title,
-    order=1000,
-    level=0, genLevel=0,
-    exp=0, genExp=0,
-    nextLevelExp=100, nextGenLevelExp=100,
-    speed=1,
-}) {
-    return {
-    id, title, order, level, genLevel, exp, genExp, nextLevelExp, speed,
-    nextGenLevelExp,
-    storedExp: 0,
-    };
-}
-
-function stripStat({
-    id, level, genLevel, exp, genExp,
-    nextLevelExp, nextGenLevelExp,
-    storedExp, speed,
-}) {
-    return {
-        id, level, genLevel, exp, genExp,
-        nextLevelExp, nextGenLevelExp,
-        storedExp, speed,
-    };
 }
 
 function loadEvent([id, {
