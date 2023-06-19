@@ -40,19 +40,26 @@ body {
 .bar{
     height: 100%;
     width: 100%;
+    position: absolute;
+
     background: gray;
     display: flex;
     flex-direction: row;
     align-items: start;
-    margin: .1em;
-    position: relative;
 }
 .bar *{
     height: 100%;
 }
 .text{
+    height: 100%;
+    width: 100%;
     position: absolute;
-    left: .3em;
+
+    padding-inline: .15em;
+    box-sizing: border-box;
+    gap: .3em;
+    display: flex;
+    align-items: center;
 }
 .border {
     border: .1em solid var(--color-cycle);
@@ -101,17 +108,24 @@ body {
     flex-direction: column;
     height: fit-content;
     width: 100%;
+    padding: .2em;
     /* padding: 10px; */
-    align-items: center;
-    justify-content: center;
+    /* align-items: center;
+    justify-content: center; */
 
     position: sticky;
     top: 0;
     z-index: 1; /* show over other parts*/
     background-color: #272727;
 }
-#top_container .bar{
+#top_container>div{
     height: 1.5em;
+    position: relative;
+}
+#determination .text, #cycle .text{
+    height: 100%;
+    width: 100%;
+    justify-content: center;
 }
 #determination .negative{
     background: var(--color-cycle);
@@ -157,9 +171,10 @@ body {
     /* flex-direction: row; */
     align-items: center;
     position: relative;
+    margin: .15em;
 }
 .task .bar, .objective .bar {
-    height: 1em;
+    /* height: 1em; */
 }
 .task .bar .fill {
     background: var(--color-det);
@@ -181,14 +196,24 @@ body {
 }
 .task .text {
     width: 100%;
+    padding-inline: .15em;
+    box-sizing: border-box;
+    gap: .3em;
     display: flex;
-    justify-content:space-evenly;
-    align-items: stretch;
+    justify-content: right;
+    align-items: center;
+}
+.task .text .title {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+.task .text .icons {
+    width: 1ch;
 }
 .task .button {
     /* height: 1em; */
 }
-.task .buttonAll {
+.task .button.all {
     /* height: 1em; */
 }
 
@@ -202,28 +227,29 @@ body {
 .stat {
     display: flex;
     flex-direction: column;
-    height: fit-content;
+    height: 1em;
     min-width: 25%;
     position: relative;
     align-items: center;
     justify-content: center;
 }
 .stat .bar{
-    height: .5em;
+    height: 50%;
+}
+.stat .text{
+    left: .3em;
 }
 .bar.gen{
-    height: .5em;
-    margin-bottom: 0;
+    margin-bottom: .5em;
+}
+.bar.inst{
+    margin-top: .5em;
 }
 .gen .fill{
     background: var(--color-det);
 }
 .gen .sto{
     background: var(--color-det-light);
-}
-.bar.inst{
-    margin-top: 0;
-    height: .5em;
 }
 .inst .fill{
     background: var(--color-cycle);
