@@ -117,6 +117,7 @@ function loadTask ([id,{
     order = 1000,
     baseDuration = 0.0, // 1 = 1 hour, accelerated by stats
     statsScaling = [], // [["stat", power:1.0, expWeigth:1.0], ...]
+    tags = [],
     boost = 0, // speed level modifier. +64 => x2.0
     getSpeedLevel = () => taskSpeedLevel(id), // {this task} => speed
     isEnabled = () => true, // {context} => should show up
@@ -124,7 +125,7 @@ function loadTask ([id,{
     maxCompletion = task => Number.POSITIVE_INFINITY, // this => max that can be completed
 }]) {
     return ({
-    id, title, description, order, baseDuration, boost,
+    id, title, description, order, baseDuration, tags, boost,
     getSpeedLevel, isEnabled, onCompletion, maxCompletion,
     statsScaling:statsScaling.map(([s, p=1, e]) =>
     [s, p, typeof(e) === 'undefined' ? p : +e]),
@@ -144,6 +145,7 @@ function stripTask({
 function loadObjective([id, {
     title, description,
     text, tooltip,
+    tags = [],
     order = 1000,
     isEnabled = () => true, // () => should show up
     onProgress = time => 0, // time => do things
@@ -152,7 +154,9 @@ function loadObjective([id, {
     custom,
 }]) {
     return ({
-    id, order, text:text || title, tooltip:tooltip || description,
+    id, order, tags,
+    text:text || title || "",
+    tooltip:tooltip || description || "",
     isEnabled, onProgress, onCycle, onDisplay,
     custom:{...custom},
     });
