@@ -59,6 +59,12 @@ function runTask(task, duration) {
         if (task.hasOwnProperty("onCompletion")) task.onCompletion();
     }
     task.progress += progress;
+
+    // update summary
+    let involvedStats = task.statsScaling.filter(([,p]) => p > 0).map(([id])=>id);
+    for (id of involvedStats) {
+        game.summary.cyclesSpent[id] += duration/involvedStats.length;
+    }
 }
 
 function endCycle() {
@@ -132,12 +138,22 @@ function reset() {
         cycle:0,
         timeLeft: 100.0,
         cycleLength: 100,
+        summary: {
+            cyclesSpent: Object.fromEntries(
+                Object.values(game.stats).map(s => [s.id, 0])),
+            startingStats: Object.fromEntries(
+                Object.values(game.stats).map(s => [s.id, structuredClone(s)])),
+        },
 
         //longPlan: [], // potato: [[{},... tasks for hour],...]
     }
     game.generation += 1;
     console.log("generation "+game.generation);
     loadTaskGroup(initialTaskGroup);
+    game.summary.cyclesSpent = Object.fromEntries(
+        Object.values(game.stats).map(s => [s.id, 0]))
+    game.summary.startingStats = Object.fromEntries(
+        Object.values(game.stats).map(s => [s.id, structuredClone(s)]))
     
     Object.keys(game.tasks).forEach(key => refreshTaskSpeed(game.tasks[key]))
 

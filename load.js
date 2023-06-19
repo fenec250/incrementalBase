@@ -7,7 +7,7 @@ var game = {
     events: [],
 
     persistent: {},
-    onResetList: [],
+    summary: {cyclesSpent:{}, startingStats:{}, },
     
     currentTask: null,
     timeLeft: 1.0,
@@ -169,6 +169,7 @@ function save(id='quickSave') {
 
         persistent: game.persistent,
         generation: game.generation,
+        summary: game.summary,
         
         currentTask: game.currentTask?.id,
         timeLeft: game.timeLeft,
@@ -185,7 +186,8 @@ function load(id='quickSave') {
     console.log("loading "+id+": ", save);
     if (!save)
         return;
-    game = {...game, ...save}; //probably breaks references?
+    game = {...game, ...save,
+        stats:game.stats};
     loadTaskGroup(save.taskGroup)
     //game = save;
     game.stats = Object.fromEntries(save.stats.map(s => [s.id, {...game.stats[s.id], ...s}]))
