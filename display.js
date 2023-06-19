@@ -22,7 +22,49 @@ function showTop() {
     cycdiv.querySelector(".cycle").innerHTML = game.cycle;
     cycdiv.querySelector(".progress").innerHTML = (game.cycleLength - game.timeLeft).toPrecision(3) + " / " + game.cycleLength;
     // div.querySelector(".title")
+}
 
+function showRecap() {
+    const sectionRoot = document.getElementById("recap");
+    sectionRoot.style.display = "";
+
+    const lvlBar = sectionRoot.querySelector(".lvl");
+    lvlBar.innerHTML = ""; // todo: hide elements? reuse elements?
+    let totalLvlGain = Object.values(game.stats).map(s =>
+        s.level - game.summary.startingStats[s.id].level)
+        .reduce((a,b)=>a+b)
+    lvlBar.style.display = totalLvlGain > 0 ? "" : "none"
+
+    const cyclesBar = sectionRoot.querySelector(".cycles");
+    cyclesBar.innerHTML = "";
+    const idleNode = document.createElement("div"); // todo: template
+    cyclesBar.appendChild(idleNode);
+    let idleCycles = game.cycle - Object.values(game.summary.cyclesSpent)
+        .reduce((a,b)=>a+b)/100;
+    idleNode.style.width = idleCycles*100/game.cycle+"%";
+    idleNode.innerHTML = "Idle: " + (idleCycles>= 1
+                ? idleCycles.toPrecision(3) : idleCycles.toFixed(2));
+
+    for (stat of Object.values(game.stats)) {
+        if (totalLvlGain > 0){
+            const lvlNode = document.createElement("div"); // todo: template
+            lvlBar.appendChild(lvlNode);
+            let diff = stat.level - game.summary.startingStats[stat.id].level
+            lvlNode.style.width = diff/totalLvlGain*100 + "%";
+            lvlNode.innerHTML = stat.title + ' +' + diff
+        }
+        const cycleNode = document.createElement("div"); // todo: template
+        let cyclesSpent = game.summary.cyclesSpent[stat.id]/100
+        if (cyclesSpent > 0) {
+            cyclesBar.appendChild(cycleNode);
+            cycleNode.style.width = cyclesSpent*100/game.cycle+"%";
+            cycleNode.innerHTML = stat.title + ': ' + (cyclesSpent >= 1
+                ? cyclesSpent.toPrecision(3) : cyclesSpent.toFixed(2));
+        }
+    }
+}
+function hideRecap() {
+    document.getElementById("recap").style.display = "none";
 }
 
 function showStats() {

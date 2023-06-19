@@ -84,6 +84,7 @@ function endCycle() {
     Object.values(game.objectives).filter(d => d.isEnabled())
         .forEach(d => d.onCycle());
     if (game.determination.amount < 0) {
+        showRecap();
         reset();
     }
     // refresh data of displayable

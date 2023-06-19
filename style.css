@@ -126,6 +126,27 @@ body {
     background: var(--color-cycle)
 }
 
+#recap {
+    display: flex;
+    flex-direction: column;
+}
+#recap .bar {
+    height: 1.2em;
+    position: relative;
+}
+#recap .lvl div:nth-child(2n){
+    background: var(--color-det);
+}
+#recap .lvl div:nth-child(2n+1){
+    background: var(--color-det-light);
+}
+#recap .cycles div:nth-child(2n){
+    background: var(--color-cycle);
+}
+#recap .cycles div:nth-child(2n+1){
+    background: var(--color-cycle-light);
+}
+
 #tasks_container, #objectives_container, #resources_container {
     display: flex;
     flex-direction: column;
