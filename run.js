@@ -24,8 +24,8 @@ function run(taskId, times=1, stopEarly=false) {
     // console.log(timeToComplete, game.timeLeft);
     
     if (!!game.currentTask) {
-        runTask(game.currentTask, timeToComplete);
-        storeExp(game.currentTask.statsScaling, timeToComplete * game.currentTask.speed);
+        runTask(game.currentTask, timeToComplete, stopEarly);
+        //storeExp(game.currentTask.statsScaling, timeToComplete * game.currentTask.speed);
     }
 
     Object.values(game.objectives).filter(d => d.isEnabled())
@@ -45,20 +45,24 @@ function run(taskId, times=1, stopEarly=false) {
     runLock = false;
 }
 
-function runTask(task, duration) {
+function runTask(task, duration, stopEarly) {
     if (task.baseDuration <= 0) {
-        if (task.hasOwnProperty("onCompletion")) task.onCompletion();
+        if (task.hasOwnProperty("onCompletion") && !stopEarly)
+            task.onCompletion();
         return;
     }
-    let progress = duration * task.speed
+    let remaining = duration;
     //console.log(task.id, progress, task.speed, timeToComplete)
-    while (task.baseDuration - task.progress - progress <= 0) {
+    while (remaining * task.speed >= task.baseDuration - task.progress) {
+        remaining -= (task.baseDuration - task.progress)/task.speed
         //console.log(task.baseDuration - task.progress)
-        progress -= task.baseDuration - task.progress;
+        //progress -= task.baseDuration - task.progress;
+        storeExp(task.statsScaling, task.baseDuration - task.progress);
         task.progress = 0;
         if (task.hasOwnProperty("onCompletion")) task.onCompletion();
     }
-    task.progress += progress;
+    task.progress += remaining * task.speed;
+    storeExp(task.statsScaling, remaining * task.speed);
 
     // update summary
     let involvedStats = task.statsScaling.filter(([,p]) => p > 0).map(([id])=>id);
@@ -130,7 +134,7 @@ function reset() {
         resources:{},
         tasks:{},
         objectives: {},
-        determination: {base:0, max:0, amount:0, decay: 0},
+        determination: {base:100, max:100, amount:100, decay: 0},
         events: [],
         
         currentTask: null,
