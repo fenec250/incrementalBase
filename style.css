@@ -83,7 +83,7 @@ body {
     margin-left: -18ch;
     /* margin-left: min(-17.5em, -25%); */
     opacity: 0;
-    font-size: 12px;
+    font-size: 14px;
     transition: opacity 0.3s;
     z-index: 1; /* show over regular elements */
     pointer-events: none /* let clicks trough */
@@ -147,6 +147,7 @@ body {
 #recap .bar {
     height: 1.2em;
     position: relative;
+    font-size: 14px;
 }
 #recap .lvl div:nth-child(2n){
     background: var(--color-det);
@@ -160,6 +161,11 @@ body {
 #recap .cycles div:nth-child(2n+1){
     background: var(--color-cycle-light);
 }
+#recap .end.text{
+    width: 36ch;
+    flex-grow: 1;
+}
+
 
 #tasks_container, #objectives_container, #resources_container {
     display: flex;

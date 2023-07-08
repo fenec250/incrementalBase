@@ -46,12 +46,12 @@ function showRecap() {
                 ? idleCycles.toPrecision(3) : idleCycles.toFixed(2));
 
     for (stat of Object.values(game.stats)) {
-        if (totalLvlGain > 0){
+        let levelDiff = stat.level - game.summary.startingStats[stat.id].level
+        if (totalLvlGain > 0 && levelDiff/totalLvlGain > 0.01){
             const lvlNode = document.createElement("div"); // todo: template
             lvlBar.appendChild(lvlNode);
-            let diff = stat.level - game.summary.startingStats[stat.id].level
-            lvlNode.style.width = diff/totalLvlGain*100 + "%";
-            lvlNode.innerHTML = stat.title + ' +' + diff
+            lvlNode.style.width = levelDiff/totalLvlGain*100 + "%";
+            lvlNode.innerHTML = stat.title + ' +' + levelDiff
         }
         const cycleNode = document.createElement("div"); // todo: template
         let cyclesSpent = game.summary.cyclesSpent[stat.id]/100
@@ -62,6 +62,12 @@ function showRecap() {
                 ? cyclesSpent.toPrecision(3) : cyclesSpent.toFixed(2));
         }
     }
+
+    let endText = "Your journey ended."
+    if (typeof(game.taskGroup.getEndText) == 'function') {
+        endText = game.taskGroup.getEndText() + "<hr>";
+    }
+    sectionRoot.querySelector(".end").innerHTML = endText;
 }
 function hideRecap() {
     document.getElementById("recap").style.display = "none";
