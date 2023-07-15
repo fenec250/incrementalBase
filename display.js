@@ -173,21 +173,29 @@ function showTasks() {
             taskNode.id = "t_"+task.id;
             taskNode.querySelector(".title").innerHTML = task.title;
             taskNode.querySelector('.tooltip .prog .duration').innerHTML = task.baseDuration;
+        }
+        let descrNode = document.getElementById("td_"+task.id);
+        if (!descrNode) {
+            descrNode = document.getElementById("task_description_template").cloneNode(true);
+            descrNode.id = "td_"+task.id;
+            document.querySelector("#description_container div").appendChild(descrNode);
             if (!!task.description) {
-                taskNode.querySelector(".tooltip .description").innerHTML = task.description;
+                descrNode.querySelector(".description").innerHTML = task.description;
             }
         }
-        showTaskBase(task, taskNode, init, game.timeLeft*task.speed/task.baseDuration);
-        showTaskButtons(task, taskNode, init);
+
+        showTaskBase(task, taskNode, descrNode, init, game.timeLeft*task.speed/task.baseDuration);
+        showTaskTooltip(task, taskNode, descrNode, init);
     }
 }
 
 function showTaskBase(task, taskNode, init=false, progress=0) {
     if (init) {
         taskNode.querySelector(".title").innerHTML = task.title;
-        if (!!task.description) {
-            taskNode.querySelector(".tooltip .description").innerHTML = task.description;
-        }
+        taskNode.querySelector(".button.click").onclick = (e) => queueTask(e, task.id);
+        taskNode.querySelector(".button.click").oncontextmenu = (e) => queueTask(e, task.id);
+        taskNode.querySelector(".button.all").onclick = (e) => queueTask(e, task.id, Number.POSITIVE_INFINITY);
+        taskNode.querySelector(".button.all").oncontextmenu = (e) => queueTask(e, task.id, Number.POSITIVE_INFINITY);
     }
     let fill = task.progress/task.baseDuration;
     taskNode.querySelector('.bar .fill').style = "width: " + fill*100+"%";
@@ -204,6 +212,20 @@ function showTaskBase(task, taskNode, init=false, progress=0) {
     else
         taskNode.querySelector(".text .icons").style.display = "none";
 
+    let maxCompletion = task.maxCompletion(task);
+    taskNode.querySelector(".button.click").disabled = maxCompletion <= 0;
+    taskNode.querySelector(".button.all").disabled = maxCompletion <= 0;
+    let multiCompletion = Math.min(maxCompletion, ((task.progress+game.timeLeft*task.speed)/task.baseDuration)>>0);
+    let ba = taskNode.querySelector(".button.max");
+    ba.onclick = (e) => queueTask(e, task.id, Math.max(multiCompletion,1));
+    ba.oncontextmenu = (e) => queueTask(e, task.id, Math.max(multiCompletion,1));
+    if (multiCompletion > 0) {
+        ba.innerHTML = 'x' + (multiCompletion>=1000 ? multiCompletion.toPrecision(3) : multiCompletion);
+        ba.disabled = false;
+    } else {ba.disabled = true;}
+}
+
+function showTaskTooltip(task, taskNode, descrNode, init) {
     taskNode.querySelector('.tooltip .prog .amount').innerHTML = task.progress>=1
         ? task.progress.toPrecision(3) : task.progress.toFixed(2);
     taskNode.querySelector('.tooltip .prog .duration').innerHTML = task.baseDuration.toPrecision(3);
@@ -240,26 +262,23 @@ function showTaskBase(task, taskNode, init=false, progress=0) {
         taskNode.querySelector('.tooltip .ttcf span').innerHTML =
             (100/task.timeToComplete).toPrecision(3);
     }
+
+    descrNode.querySelector(".mechanics").innerHTML = taskNode.querySelector(".mechanics").innerHTML;
 }
 
-function showTaskButtons(task, taskNode, init=false) {
-    if (init) {
-        taskNode.querySelector(".button.click").onclick = (e) => queueTask(e, task.id);
-        taskNode.querySelector(".button.click").oncontextmenu = (e) => queueTask(e, task.id);
-        taskNode.querySelector(".button.all").onclick = (e) => queueTask(e, task.id, Number.POSITIVE_INFINITY);
-        taskNode.querySelector(".button.all").oncontextmenu = (e) => queueTask(e, task.id, Number.POSITIVE_INFINITY);
-    }
-    let maxCompletion = task.maxCompletion(task);
-    taskNode.querySelector(".button.click").disabled = maxCompletion <= 0;
-    taskNode.querySelector(".button.all").disabled = maxCompletion <= 0;
-    let multiCompletion = Math.min(maxCompletion, ((task.progress+game.timeLeft*task.speed)/task.baseDuration)>>0);
-    let ba = taskNode.querySelector(".button.max");
-    ba.onclick = (e) => queueTask(e, task.id, Math.max(multiCompletion,1));
-    ba.oncontextmenu = (e) => queueTask(e, task.id, Math.max(multiCompletion,1));
-    if (multiCompletion > 0) {
-        ba.innerHTML = 'x' + (multiCompletion>=1000 ? multiCompletion.toPrecision(3) : multiCompletion);
-        ba.disabled = false;
-    } else {ba.disabled = true;}
+
+function hideDescription() {
+    document.getElementById("description_container")
+        .querySelectorAll(".task-description:not(.hidden)")
+        .forEach((shownDescr) => {shownDescr.classList.add("hidden")});
+}
+
+function onUpdateDescription(event) {
+    hideDescription();
+
+    let descrId = event.target.closest('.task')?.id.replace("t_", "td_")
+        ||event.target.closest('.objective')?.id.replace("o_", "od_");
+    document.getElementById(descrId)?.classList.remove("hidden");
 }
 
 function showObjectives() {
@@ -271,22 +290,33 @@ function showObjectives() {
         .map(([,o]) => o)
         .sort((a,b) => a.order > b.order);
     for (let objective of filteredObjectives) {
-        let node = document.getElementById("d_"+objective.id);
-        let init = false;
+        let node = document.getElementById("o_"+objective.id);
         if (!node) {
-            init = true;
             node = objectiveTemplate.cloneNode(true);
             objectivesDiv.appendChild(node);
-            node.id = "d_"+objective.id;
+            node.id = "o_"+objective.id;
             node.querySelector('.text').innerHTML = objective.text;
-            node.querySelector('.tooltip').innerHTML = objective.tooltip;
+            if (!!objective.tooltip) {
+                node.querySelector('.tooltip').style.display = ""
+                node.querySelector('.tooltip').innerHTML = objective.tooltip;
+            }
         }
-        objective.onDisplay(node);
+        let descrNode = document.getElementById("od_"+objective.id);
+        if (!descrNode) {
+            descrNode = document.getElementById("objective_description_template").cloneNode(true);
+            descrNode.id = "od_"+objective.id;
+            document.querySelector("#description_container div").appendChild(descrNode);
+            if (!!objective.description) {
+                descrNode.querySelector(".description").innerHTML = objective.description;
+            }
+        }
+        objective.onDisplay(node, descrNode);
     }
 }
 
 function queueTask(e, id, times=1) {
     if (!e) var e = window.event;
+    if (!id) var id = e.target.id.replace("t_","");
     var rightclick;
     if (e.which) rightclick = (e.which == 3);
     else if (e.button) rightclick = (e.button == 2);

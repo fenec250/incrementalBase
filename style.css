@@ -264,6 +264,47 @@ body {
     background: var(--color-cycle-light);
 }
 
+#description_container {
+    width: 100%;
+    max-height: max(50vh, 20ch);
+    /* align-items: center; */
+    /* justify-content: center; */
+
+    position: sticky;
+    bottom: 0;
+    z-index: 1; /* show over other parts*/
+    background-color: #272727;
+}
+#description_container > div{
+    display: flex;
+    flex-direction: column;
+}
+
+.task-description {
+    display: flex;
+    flex-direction: row;
+    gap: 1.2em;
+    /* flex-wrap: wrap; an option to toggle would be nice? */
+    flex-wrap: wrap-reverse;
+    font-size: 14px;
+    height: min(20ch, 100%);
+}
+.task-description.hidden {
+    display: none;
+}
+
+.task-description .description {
+    width: max(30em, min(100% - 30ch - 1.2em, 45em));
+    max-height: 100%;
+    overflow-y: scroll;
+    /* Not the best way to limit its growth while allowing warp too */
+}
+
+.task-description .mechanics {
+    width: 30ch;
+    position: sticky;
+    top: 0;
+}
 
 #popup_group {
     position: fixed;

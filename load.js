@@ -154,7 +154,8 @@ function loadObjective([id, {
     return ({
     id, order, tags,
     text:text || title || "",
-    tooltip:tooltip || description || "",
+    tooltip:tooltip || "",
+    description:description || "",
     isEnabled, onProgress, onCycle, onDisplay,
     custom:{...custom},
     });

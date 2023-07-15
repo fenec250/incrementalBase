@@ -63,9 +63,10 @@
         </div>
       </div>
     </div>
+
     <hr/>
 
-    <div id="recap" style="position: relative; display:none;">
+    <div id="recap" style="display:none;">
       <div class="lvl bar"></div>
       <div class="cycles bar"></div>
       <hr style="width: 100%;"/>
@@ -83,7 +84,7 @@
         <div id = "events_container"></div>
       </div>
 
-      <div id="actions_panel" class="panel">
+      <div id="objectives_panel" class="panel">
         <h1 align="center">Objectives</h1>
         <div id="objectives_container"></div>
       </div>
@@ -100,7 +101,12 @@
       </div>
       <div id="story_panel" class="panel">
       </div>
-    </div> <!-- End of div.page -->
+    </div>
+
+    <div id="description_container">
+      <hr style="width: 100%;"/>
+      <div></div>
+    </div>
 
     <!-- Holds UI elements that will be cloned and placed in the main page. This block itself is always hidden. -->
     <div id="ui_library" style="display: none;">
@@ -110,9 +116,9 @@
           <div class="fill"></div>
           <div class="prog"></div>
         </div>
-        <span class="text">
+        <span class="text" onmouseenter="onUpdateDescription(event)" onclick="onUpdateDescription(event)">
         </span>
-        <div class="tooltip">
+        <div class="tooltip" style="display: none;">
         </div>
       </div>
 
@@ -121,7 +127,7 @@
           <div class="fill"></div>
           <div class="prog"></div>
         </div>
-        <div class="text">
+        <div class="text" onmouseenter="onUpdateDescription(event)" onclick="onUpdateDescription(event)">
           <div class="icons"></div>
           <div class="title"></div>
           <button class="button click" onclick="">></button>
@@ -129,15 +135,25 @@
           <button class="button all" onclick="">>></button>
         </div>
         <div class="tooltip">
-          <div class="description"></div>
-          <br>
-          <div class="speed">Speed x<span class="val"></span><span class="scaling"> based on <span class="sval"></span></span></div>
-          <div class="boost">Experience x<span class="val"></span></div>
-          <div class="prog">Progress: <span class="amount"></span>/<span class="duration"></span></div>
-          <div class="ttc">Completes in <span class="val"></span> cycles (<span class="left"></span> left)</div>
-          <div class="ttcf">Completes <span></span> times per cycle</div>
-          <div class="ttci">Completes instantly</div>
+          <div class="mechanics">
+            <div class="additional-mechanic" style="display: none;"><span></span></div>
+            <div class="speed">Speed x<span class="val"></span><span class="scaling"> based on <span class="sval"></span></span></div>
+            <div class="boost">Experience x<span class="val"></span></div>
+            <div class="prog">Progress: <span class="amount"></span>/<span class="duration"></span></div>
+            <div class="ttc">Completes in <span class="val"></span> cycles (<span class="left"></span> left)</div>
+            <div class="ttcf">Completes <span></span> times per cycle</div>
+            <div class="ttci">Completes instantly</div>
+          </div>
         </div>
+      </div>
+
+      <div id="task_description_template" class="task-description hidden">
+        <div class="description"></div>
+        <div class="mechanics"></div><!-- copied from the Task -->
+      </div>
+
+      <div id="objective_description_template" class="task-description hidden">
+        <div class="description"></div>
       </div>
 
       <div id="event_template" class="event">
