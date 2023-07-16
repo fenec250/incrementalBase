@@ -218,17 +218,21 @@ function showTaskBase(task, taskNode, init=false, progress=0) {
     else
         taskNode.querySelector(".text .icons").style.display = "none";
 
-    let maxCompletion = task.maxCompletion(task);
+    let maxCompletion = +task.maxCompletion(task);
     taskNode.querySelector(".button.click").disabled = maxCompletion <= 0;
     taskNode.querySelector(".button.all").disabled = maxCompletion <= 0;
-    let multiCompletion = Math.min(maxCompletion, ((task.progress+game.timeLeft*task.speed)/task.baseDuration)>>0);
-    let ba = taskNode.querySelector(".button.max");
-    ba.onclick = (e) => queueTask(e, task.id, Math.max(multiCompletion,1));
-    ba.oncontextmenu = (e) => queueTask(e, task.id, Math.max(multiCompletion,1));
-    if (multiCompletion > 0) {
-        ba.innerHTML = 'x' + (multiCompletion>=1000 ? multiCompletion.toPrecision(3) : multiCompletion);
-        ba.disabled = false;
-    } else {ba.disabled = true;}
+    if (maxCompletion > 0 && Number.isFinite(maxCompletion)) {
+        let multiCompletion = (game.timeLeft*task.speed)/task.baseDuration;
+        let hint = '';
+        if (!isFinite(multiCompletion)) { hint = ''; }
+        else if (task.progress/task.baseDuration + multiCompletion > maxCompletion) {
+            hint += 'x' + maxCompletion > 1000 ? maxCompletion.toPrecision(2) : maxCompletion;
+            hint += '|' + (100-game.timeLeft + (maxCompletion*task.baseDuration - task.progress)/task.speed).toPrecision(2)
+        } else {
+            hint += 'x' + (multiCompletion > 1000 || multiCompletion%1>0) ? multiCompletion.toPrecision(2) : multiCompletion;
+        }
+        taskNode.querySelector(".max").innerHTML = hint;
+    }
 }
 
 function showTaskTooltip(task, taskNode, init) {

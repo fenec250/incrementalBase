@@ -215,12 +215,15 @@ body {
     justify-content: right;
     align-items: center;
 }
+.task .text .icons {
+    width: 1ch;
+}
 .task .text .title {
     flex-grow: 1;
     flex-shrink: 1;
 }
-.task .text .icons {
-    width: 1ch;
+.task .text .max {
+    font-size: 14px;
 }
 .task .button {
     /* height: 1em; */
