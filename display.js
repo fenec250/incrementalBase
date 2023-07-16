@@ -20,7 +20,7 @@ function showTop() {
     const cycdiv = document.getElementById("cycle");
     cycdiv.querySelector(".fill").style.width = (100-(game.timeLeft / game.cycleLength)*100) + "%"
     cycdiv.querySelector(".cycle").innerHTML = game.cycle;
-    cycdiv.querySelector(".progress").innerHTML = (game.cycleLength - game.timeLeft).toPrecision(3) + " / " + game.cycleLength;
+    cycdiv.querySelector(".progress").innerHTML = (game.cycleLength - game.timeLeft).toFixed(0) + " / " + game.cycleLength;
     // div.querySelector(".title")
 }
 
@@ -188,8 +188,10 @@ function showTasks() {
             }
         }
 
-        showTaskBase(task, taskNode, descrNode, init, game.timeLeft*task.speed/task.baseDuration);
-        showTaskTooltip(task, taskNode, descrNode, init);
+        showTaskBase(task, taskNode, init, game.timeLeft*task.speed/task.baseDuration);
+        showTaskTooltip(task, taskNode, init);
+
+        descrNode.querySelector(".mechanics").innerHTML = taskNode.querySelector(".mechanics").innerHTML;
     }
 }
 
@@ -229,7 +231,7 @@ function showTaskBase(task, taskNode, init=false, progress=0) {
     } else {ba.disabled = true;}
 }
 
-function showTaskTooltip(task, taskNode, descrNode, init) {
+function showTaskTooltip(task, taskNode, init) {
     taskNode.querySelector('.tooltip .prog .amount').innerHTML = task.progress>=1
         ? task.progress.toPrecision(3) : task.progress.toFixed(2);
     taskNode.querySelector('.tooltip .prog .duration').innerHTML = task.baseDuration.toPrecision(3);
@@ -266,8 +268,6 @@ function showTaskTooltip(task, taskNode, descrNode, init) {
         taskNode.querySelector('.tooltip .ttcf span').innerHTML =
             (100/task.timeToComplete).toPrecision(3);
     }
-
-    descrNode.querySelector(".mechanics").innerHTML = taskNode.querySelector(".mechanics").innerHTML;
 }
 
 
