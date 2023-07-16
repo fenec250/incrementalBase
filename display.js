@@ -45,12 +45,16 @@ function showRecap() {
     idleNode.innerHTML = "Idle: " + (idleCycles>= 1
                 ? idleCycles.toPrecision(3) : idleCycles.toFixed(2));
 
+    const lvlPaddingNode = document.createElement("div"); // todo: template
+    lvlBar.appendChild(lvlPaddingNode);
+    lvlPaddingNode.style.width = idleNode.style.width;
+
     for (stat of Object.values(game.stats)) {
         let levelDiff = stat.level - game.summary.startingStats[stat.id].level
         if (totalLvlGain > 0 && levelDiff/totalLvlGain > 0.01){
             const lvlNode = document.createElement("div"); // todo: template
             lvlBar.appendChild(lvlNode);
-            lvlNode.style.width = levelDiff/totalLvlGain*100 + "%";
+            lvlNode.style.width = levelDiff/totalLvlGain*(1-idleCycles/game.cycle)*100 + "%";
             lvlNode.innerHTML = stat.title + ' +' + levelDiff
         }
         const cycleNode = document.createElement("div"); // todo: template
