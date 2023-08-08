@@ -233,11 +233,12 @@ function showTaskBase(task, taskNode, init=false, progress=0) {
         let multiCompletion = (game.timeLeft*task.speed)/task.baseDuration;
         let hint = '';
         if (!isFinite(multiCompletion)) { hint = ''; }
-        else if (task.progress/task.baseDuration + multiCompletion > maxCompletion) {
-            hint += 'x' + maxCompletion > 1000 ? maxCompletion.toPrecision(2) : maxCompletion;
-            hint += '|' + (100-game.timeLeft + (maxCompletion*task.baseDuration - task.progress)/task.speed).toPrecision(2)
+        else if (task.progress/task.baseDuration + multiCompletion >= maxCompletion) {
+            multiCompletion = maxCompletion - task.progress/task.baseDuration;
+            hint += 'x' + ((multiCompletion > 1000 || multiCompletion%1>0) ? multiCompletion.toPrecision(2) : multiCompletion);
+            hint += '|' + (100-game.timeLeft + (maxCompletion*task.baseDuration - task.progress)/task.speed).toFixed(0)
         } else {
-            hint += 'x' + (multiCompletion > 1000 || multiCompletion%1>0) ? multiCompletion.toPrecision(2) : multiCompletion;
+            hint += 'x' + ((multiCompletion > 1000 || multiCompletion%1>0) ? multiCompletion.toPrecision(2) : multiCompletion);
         }
         taskNode.querySelector(".max").innerHTML = hint;
     }
@@ -260,10 +261,10 @@ function showTaskTooltip(task, taskNode, init) {
                     game.stats[s].title + (p==1 ? "":"^"+p.toPrecision(2)))
                 .reduce((a,b) => a + ", " + b);
     taskNode.querySelector('.tooltip .boost').style.display =
-        (task.speedLevel != taskSpeedLevel(task.id)
+        (task.speedLevel != expectedTaskSpeedLevel(task.id)
             && task.timeToComplete != 0) ? "" : "none"
     taskNode.querySelector('.tooltip .boost .val').innerHTML =
-        speed(task.speedLevel - taskSpeedLevel(task.id)).toPrecision(3)
+        speed(task.speedLevel - expectedTaskSpeedLevel(task.id)).toPrecision(3)
 
     taskNode.querySelector('.tooltip .ttci').style.display =
         task.timeToComplete == 0 ? "" : "none";

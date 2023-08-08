@@ -25,6 +25,13 @@ function taskSpeedLevel(id) {
     + game.tasks[id].boost;
 }
 
+function expectedTaskSpeedLevel(id) {
+    return game.tasks[id].statsScaling
+    .map(([s, p]) => game.stats[s] || {level:0,genLevel:0})
+    .map((s) => (s.level + s.genLevel*4)/game.tasks[id].statsScaling.length)
+    .reduce((total, v) => total + v, 0);
+}
+
 function refreshTaskSpeed(task) {
     task.speedLevel = task.getSpeedLevel();
     task.speed = speed(task.speedLevel);
