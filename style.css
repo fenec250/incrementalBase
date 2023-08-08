@@ -4,11 +4,12 @@
     --color-cycle: hsl(300, 24%, 50%);
     --color-cycle-light: hsl(300, 25%, 65%);
     --color-run: hsl(51, 100%, 50%);
-    --color-background: 
+    --color-background: #272727;
+    --color-background-over-image: #272727a0;
 }
 
 body {
-    background: #272727;
+    background: var(--color-background);
     /* background: #170804 url("../img/page_bg.jpg") repeat-x left top; */
     /* background-attachment: fixed; */
     /* font-family: Palatino, Times, "Times New Roman", serif; */
@@ -274,45 +275,45 @@ body {
 }
 
 #description_container {
-    width: 100%;
-    max-height: max(50vh, 20ch);
-    /* align-items: center; */
-    /* justify-content: center; */
+    display: flex;
+    flex-direction: column;
 
     position: sticky;
     bottom: 0;
-    z-index: 1; /* show over other parts*/
+    z-index: 1;
     background-color: #272727;
+    height: 20ch;
 }
-#description_container > div{
-    display: flex;
-    flex-direction: column;
+#description_container > .box{
+    overflow-y: visible;
+    padding-bottom: 5ch;
+    flex-grow: 1;
 }
 
-.task-description {
+.item-description > .box{
     display: flex;
     flex-direction: row;
     gap: 1.2em;
     /* flex-wrap: wrap; an option to toggle would be nice? */
     flex-wrap: wrap-reverse;
     font-size: 14px;
-    height: min(20ch, 100%);
 }
-.task-description.hidden {
+.item-description.hidden {
     display: none;
 }
 
-.task-description .description {
-    width: max(30em, min(100% - 30ch - 1.2em, 45em));
+.item-description .description {
+    flex: 1 0 30em;
+    max-width: 45em;
     max-height: 100%;
     overflow-y: scroll;
+    background-color: var(--color-background-over-image);
     /* Not the best way to limit its growth while allowing warp too */
 }
 
-.task-description .mechanics {
-    width: 30ch;
-    position: sticky;
-    top: 0;
+.item-description .mechanics {
+    flex: 0 0 30ch;
+    background-color: var(--color-background-over-image);
 }
 
 #popup_group {

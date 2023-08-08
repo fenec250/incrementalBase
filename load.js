@@ -111,7 +111,7 @@ function stripEvent({
 }
 
 function loadTask ([id,{
-    title, description,
+    title, description, tooltip, image,
     order = 1000,
     baseDuration = 0.0, // 1 = 1 hour, accelerated by stats
     statsScaling = [], // [["stat", power:1.0, expWeigth:1.0], ...]
@@ -123,7 +123,8 @@ function loadTask ([id,{
     maxCompletion = task => Number.POSITIVE_INFINITY, // this => max that can be completed
 }]) {
     return ({
-    id, title, description, order, baseDuration, tags, boost,
+    id, title, description, tooltip, image,
+    order, baseDuration, tags, boost,
     getSpeedLevel, isEnabled, onCompletion, maxCompletion,
     statsScaling:statsScaling.map(([s, p=1, e]) =>
     [s, p, typeof(e) === 'undefined' ? p : +e]),
@@ -141,8 +142,8 @@ function stripTask({
 }
 
 function loadObjective([id, {
-    title, description,
-    text, tooltip,
+    description, mechanics, tooltip, image,
+    text, title,
     tags = [],
     order = 1000,
     isEnabled = () => true, // () => should show up
@@ -152,9 +153,8 @@ function loadObjective([id, {
     custom,
 }]) {
     return ({
-    id, order, tags,
+    id, order, tags, image, tooltip, mechanics,
     text:text || title || "",
-    tooltip:tooltip || "",
     description:description || "",
     isEnabled, onProgress, onCycle, onDisplay,
     custom:{...custom},

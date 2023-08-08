@@ -180,7 +180,7 @@ function showTasks() {
         }
         let descrNode = document.getElementById("td_"+task.id);
         if (!descrNode) {
-            descrNode = document.getElementById("task_description_template").cloneNode(true);
+            descrNode = document.getElementById("item_description_template").cloneNode(true);
             descrNode.id = "td_"+task.id;
             document.querySelector("#description_container div").appendChild(descrNode);
             if (!!task.description) {
@@ -198,6 +198,10 @@ function showTasks() {
 function showTaskBase(task, taskNode, init=false, progress=0) {
     if (init) {
         taskNode.querySelector(".title").innerHTML = task.title;
+        if (!!task.tooltip) {
+            taskNode.querySelector(".tooltip .custom span").innerHTML = task.tooltip;
+            taskNode.querySelector(".tooltip .custom").style.display = null;
+        }
         taskNode.querySelector(".button.click").onclick = (e) => queueTask(e, task.id);
         taskNode.querySelector(".button.click").oncontextmenu = (e) => queueTask(e, task.id);
         taskNode.querySelector(".button.all").onclick = (e) => queueTask(e, task.id, Number.POSITIVE_INFINITY);
@@ -277,7 +281,7 @@ function showTaskTooltip(task, taskNode, init) {
 
 function hideDescription() {
     document.getElementById("description_container")
-        .querySelectorAll(".task-description:not(.hidden)")
+        .querySelectorAll(".item-description:not(.hidden)")
         .forEach((shownDescr) => {shownDescr.classList.add("hidden")});
 }
 
@@ -311,11 +315,14 @@ function showObjectives() {
         }
         let descrNode = document.getElementById("od_"+objective.id);
         if (!descrNode) {
-            descrNode = document.getElementById("objective_description_template").cloneNode(true);
+            descrNode = document.getElementById("item_description_template").cloneNode(true);
             descrNode.id = "od_"+objective.id;
             document.querySelector("#description_container div").appendChild(descrNode);
             if (!!objective.description) {
                 descrNode.querySelector(".description").innerHTML = objective.description;
+            }
+            if (!!objective.mechanics) {
+                descrNode.querySelector('.mechanics').innerHTML = objective.mechanics;
             }
         }
         objective.onDisplay(node, descrNode);

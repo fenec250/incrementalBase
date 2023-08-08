@@ -105,7 +105,8 @@
 
     <div id="description_container">
       <hr style="width: 100%;"/>
-      <div></div>
+      <div class="box">
+      </div>
     </div>
 
     <!-- Holds UI elements that will be cloned and placed in the main page. This block itself is always hidden. -->
@@ -136,7 +137,7 @@
         </div>
         <div class="tooltip">
           <div class="mechanics">
-            <div class="additional-mechanic" style="display: none;"><span></span></div>
+            <div class="custom" style="display: none;"><span></span><br>&nbsp;</div>
             <div class="speed">Speed x<span class="val"></span><span class="scaling"> based on <span class="sval"></span></span></div>
             <div class="boost">Experience x<span class="val"></span></div>
             <div class="prog">Progress: <span class="amount"></span>/<span class="duration"></span></div>
@@ -147,13 +148,11 @@
         </div>
       </div>
 
-      <div id="task_description_template" class="task-description hidden">
-        <div class="description"></div>
-        <div class="mechanics"></div><!-- copied from the Task -->
-      </div>
-
-      <div id="objective_description_template" class="task-description hidden">
-        <div class="description"></div>
+      <div id="item_description_template" class="item-description hidden">
+        <div class="box">
+          <div class="description"></div>
+          <div class="mechanics"></div>
+        </div>
       </div>
 
       <div id="event_template" class="event">
