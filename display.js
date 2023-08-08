@@ -186,6 +186,10 @@ function showTasks() {
             if (!!task.description) {
                 descrNode.querySelector(".description").innerHTML = task.description;
             }
+            if (!!task.image) {
+                descrNode.querySelector('.image').style.display = ""
+                descrNode.querySelector('.image').src = task.image;
+            }
         }
 
         showTaskBase(task, taskNode, init, game.timeLeft*task.speed/task.baseDuration);
@@ -314,7 +318,8 @@ function showObjectives() {
             }
         }
         let descrNode = document.getElementById("od_"+objective.id);
-        if (!descrNode) {
+        if (!descrNode
+            && (!!objective.description||!!objective.mechanics||!!objective.image)) {
             descrNode = document.getElementById("item_description_template").cloneNode(true);
             descrNode.id = "od_"+objective.id;
             document.querySelector("#description_container div").appendChild(descrNode);
@@ -323,6 +328,10 @@ function showObjectives() {
             }
             if (!!objective.mechanics) {
                 descrNode.querySelector('.mechanics').innerHTML = objective.mechanics;
+            }
+            if (!!objective.image) {
+                descrNode.querySelector('.image').style.display = ""
+                descrNode.querySelector('.image').src = objective.image;
             }
         }
         objective.onDisplay(node, descrNode);

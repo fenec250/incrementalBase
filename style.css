@@ -316,6 +316,14 @@ body {
     background-color: var(--color-background-over-image);
 }
 
+.item-description .image {
+    /* display: none; */
+    position: absolute;
+    z-index: -1;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 #popup_group {
     position: fixed;
     background-color: hsla(0, 0%, 20%, 0.5);
