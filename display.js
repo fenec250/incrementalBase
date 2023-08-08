@@ -290,12 +290,31 @@ function hideDescription() {
         .forEach((shownDescr) => {shownDescr.classList.add("hidden")});
 }
 
-function onUpdateDescription(event) {
-    hideDescription();
+function showDescription(descrId, sticky=true) {
+    if (!sticky && stickDescription)
+        return;
+    let descrNode = document.getElementById(descrId);
+    if (descrNode) {
+        hideDescription();
+        descrNode.classList.remove("hidden");
+        if (sticky) {
+            stickDescription = true;
+            document.getElementById("unstickDescription").style.display = null;
+        }
+    }
+}
 
+function handleDescriptionEvent(event) {
     let descrId = event.target.closest('.task')?.id.replace("t_", "td_")
-        ||event.target.closest('.objective')?.id.replace("o_", "od_");
-    document.getElementById(descrId)?.classList.remove("hidden");
+        || event.target.closest('.objective')?.id.replace("o_", "od_");
+    switch (event.type) {
+        case "mouseenter":
+            showDescription(descrId, false);
+            break;
+        case "click":
+            showDescription(descrId, true);
+            break;
+    }
 }
 
 function showObjectives() {

@@ -20,12 +20,14 @@ body {
 	color: #ffffff;
     max-width: 1024px;
     margin: auto;
+    position: relative;
 }
 
 #page {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(15em, 1fr));
     gap: 1rem;
+    position: relative;
     /* height: fit-content;
     overflow-y: scroll; */
 }
@@ -84,14 +86,14 @@ body {
     border-radius: 6px;
     padding: 5px;
     position: absolute;
-    top: 125%;
+    top: calc(100% + .5em);
     left: 50%;
     margin-left: -18ch;
     /* margin-left: min(-17.5em, -25%); */
     opacity: 0;
     font-size: 14px;
     transition: opacity 0.3s;
-    z-index: 1; /* show over regular elements */
+    z-index: 2; /* show over regular elements */
     pointer-events: none /* let clicks trough */
 }
 .tooltip::after {
