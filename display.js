@@ -1,3 +1,5 @@
+var stickDescription = false;
+
 function showTop() {
     const detdiv = document.getElementById("determination");
     let decay = game.determination.decay
@@ -206,10 +208,10 @@ function showTaskBase(task, taskNode, init=false, progress=0) {
             taskNode.querySelector(".tooltip .custom span").innerHTML = task.tooltip;
             taskNode.querySelector(".tooltip .custom").style.display = null;
         }
-        taskNode.querySelector(".button.click").onclick = (e) => queueTask(e, task.id);
-        taskNode.querySelector(".button.click").oncontextmenu = (e) => queueTask(e, task.id);
-        taskNode.querySelector(".button.all").onclick = (e) => queueTask(e, task.id, Number.POSITIVE_INFINITY);
-        taskNode.querySelector(".button.all").oncontextmenu = (e) => queueTask(e, task.id, Number.POSITIVE_INFINITY);
+        taskNode.querySelector(".button.click").onclick = (e) => { queueTask(e, task.id); e.stopPropagation();}
+        taskNode.querySelector(".button.click").oncontextmenu = (e) => { queueTask(e, task.id); e.stopPropagation();}
+        taskNode.querySelector(".button.all").onclick = (e) => { queueTask(e, task.id, Number.POSITIVE_INFINITY); e.stopPropagation();}
+        taskNode.querySelector(".button.all").oncontextmenu = (e) => { queueTask(e, task.id, Number.POSITIVE_INFINITY); e.stopPropagation();}
     }
     let fill = task.progress/task.baseDuration;
     taskNode.querySelector('.bar .fill').style = "width: " + fill*100+"%";
@@ -285,6 +287,8 @@ function showTaskTooltip(task, taskNode, init) {
 
 
 function hideDescription() {
+    stickDescription = false;
+    document.getElementById("unstickDescription").style.display = "none";
     document.getElementById("description_container")
         .querySelectorAll(".item-description:not(.hidden)")
         .forEach((shownDescr) => {shownDescr.classList.add("hidden")});

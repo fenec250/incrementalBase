@@ -15,7 +15,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black"> -->
   </head>
-  <body>
+  <body oncontextmenu="hideDescription()">
 
     <div id="popup_group" onclick="exitEvent()" style="display: none;">
       <div id="popup_content">
@@ -133,6 +133,11 @@
           </div>
         </div>
       </div>
+      <button id="unstickDescription"
+        onclick="hideDescription()"
+        style="display: none;">
+        X
+      </button>
     </div>
 
     <!-- Holds UI elements that will be cloned and placed in the main page. This block itself is always hidden. -->

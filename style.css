@@ -326,6 +326,12 @@ body {
     transform: translateX(-50%);
 }
 
+#unstickDescription {
+    position: absolute;
+    top: 0px;
+    right: 5ch;
+}
+
 #popup_group {
     position: fixed;
     background-color: hsla(0, 0%, 20%, 0.5);
