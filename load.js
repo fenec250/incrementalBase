@@ -190,10 +190,21 @@ function load(id='quickSave') {
     game = {...game, ...save,
         stats:game.stats};
     loadTaskGroup(save.taskGroup)
-    //game = save;
-    game.stats = Object.fromEntries(save.stats.map(s => [s.id, {...game.stats[s.id], ...s}]))
-    game.resources = Object.fromEntries(save.resources);
-    game.tasks = Object.fromEntries(save.tasks.map(s => [s.id, {...game.tasks[s.id], ...s}]))
+
+    game.stats = {...game.stats,
+        ...Object.fromEntries(save.stats
+            .filter(s => !!game.stats[s.id])
+            .map(s => [s.id, {...game.stats[s.id], ...s}]))
+    };
+    game.resources = {...game.resources,
+        ...Object.fromEntries(save.resources
+            .filter(r => !(game.resources[r[0]]===undefined)))
+    };
+    game.tasks = {...game.tasks,
+        ...Object.fromEntries(save.tasks
+            .filter(s => !!game.tasks[s.id])
+            .map(s => [s.id, {...game.tasks[s.id], ...s}]))
+    };
 
     if (!!save.currentTask)
         game.currentTask = game.tasks[save.currentTask];
