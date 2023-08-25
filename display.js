@@ -233,14 +233,20 @@ function showTaskBase(task, taskNode, init=false, progress=0) {
     taskNode.querySelector(".button.all").disabled = maxCompletion <= 0;
     if (maxCompletion > 0 && Number.isFinite(maxCompletion)) {
         let multiCompletion = (game.timeLeft*task.speed)/task.baseDuration;
+        let completionsLeft = maxCompletion - task.progress/task.baseDuration;
         let hint = '';
-        if (!isFinite(multiCompletion)) { hint = ''; }
-        else if (task.progress/task.baseDuration + multiCompletion >= maxCompletion) {
-            multiCompletion = maxCompletion - task.progress/task.baseDuration;
-            hint += 'x' + ((multiCompletion > 1000 || multiCompletion%1>0) ? multiCompletion.toPrecision(2) : multiCompletion);
+        if (!isFinite(multiCompletion)
+            || multiCompletion < 0.001
+            || completionsLeft < 0.001) { hint = ''; }
+        else if (multiCompletion >= completionsLeft) {
+            hint += 'x' + ((completionsLeft > 1000 || completionsLeft%1>0)
+                ? completionsLeft.toPrecision(2)
+                : completionsLeft);
             hint += '|' + (100-game.timeLeft + (maxCompletion*task.baseDuration - task.progress)/task.speed).toFixed(0)
         } else {
-            hint += 'x' + ((multiCompletion > 1000 || multiCompletion%1>0) ? multiCompletion.toPrecision(2) : multiCompletion);
+            hint += 'x' + ((multiCompletion > 1000 || multiCompletion%1>0)
+                ? multiCompletion.toPrecision(2)
+                : multiCompletion);
         }
         taskNode.querySelector(".max").innerHTML = hint;
     }
@@ -277,8 +283,8 @@ function showTaskTooltip(task, taskNode, init) {
     if (task.timeToComplete > 100) {
         taskNode.querySelector('.tooltip .ttc .val').innerHTML =
             (task.timeToComplete/100).toPrecision(3);
-            taskNode.querySelector('.tooltip .ttc .left').innerHTML =
-            +((task.baseDuration-task.progress)/task.speed/100).toPrecision(3);
+        taskNode.querySelector('.tooltip .ttc .left').innerHTML =
+            ((task.baseDuration-task.progress)/task.speed/100).toPrecision(3);
     } else if (task.timeToComplete != 0) {
         taskNode.querySelector('.tooltip .ttcf span').innerHTML =
             (100/task.timeToComplete).toPrecision(3);
