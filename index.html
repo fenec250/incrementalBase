@@ -84,20 +84,6 @@
         <div id = "events_container"></div>
       </div>
 
-      <div id="save_panel" class="panel">
-        <h1 align="center">Save / Load</h1>
-        <input type="text"/>
-        <button onclick="save(document.querySelector('#save_panel input').value)">Save</button>
-        <button onclick="load(document.querySelector('#save_panel input').value)">Load</button>
-      </div>
-
-      <div id="objectives_panel" class="panel">
-        <div style="position: relative;">
-          <h1 align="center">Objectives</h1>
-        </div>
-        <div id="objectives_container"></div>
-      </div>
-
       <div id="actions_panel" class="panel">
         <div style="position: relative;"
           onclick="showDescription('action_panel_description', true)"
@@ -105,6 +91,20 @@
           <h1 align="center">Actions</h1>
         </div>
         <div id="tasks_container"></div>
+      </div>
+
+      <div id="objectives_panel" class="panel">
+        <div style="position: relative;">
+          <h1 align="center">Context</h1>
+        </div>
+        <div id="objectives_container"></div>
+      </div>
+
+      <div id="save_panel" class="panel">
+        <h1 align="center">Save / Load</h1>
+        <input type="text"/>
+        <button onclick="save(document.querySelector('#save_panel input').value)">Save</button>
+        <button onclick="load(document.querySelector('#save_panel input').value)">Load</button>
       </div>
 
       <!-- <div id="plan_panel" class="panel">
@@ -126,6 +126,9 @@
               times as you can during this Cycle.
               <br>Right-click <button>>></button>: stop just before
               the end of the Cycle or the end of the last possible completion.
+              <br><br>Click an Action to make its description stick.
+              <br>Right-click anywhere else or click <button>X</button> to
+              dismiss it.
             </div>
             <div class="mechanics">
               Notes:<br>Some actions can only be completed once at a time.
