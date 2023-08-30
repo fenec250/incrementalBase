@@ -288,8 +288,6 @@ body {
 }
 #description_container > .box{
     overflow-y: visible;
-    padding-bottom: 5ch;
-    flex-grow: 1;
 }
 
 .item-description > .box{
@@ -299,6 +297,7 @@ body {
     /* flex-wrap: wrap; an option to toggle would be nice? */
     flex-wrap: wrap-reverse;
     font-size: 14px;
+    padding-bottom: 5ch;
 }
 .item-description {
     height: 0;
@@ -306,9 +305,9 @@ body {
     transition: opacity 0.3s;
 }
 .item-description.hidden {
-    /* visibility: hidden; */
+    visibility: hidden;
     opacity: 0;
-    transition: opacity 0.3s;
+    transition: opacity 0.3s, visibility 0s linear 0.3s;
 }
 
 .item-description .description {
