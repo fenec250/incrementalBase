@@ -208,10 +208,16 @@ function showTaskBase(task, taskNode, init=false, progress=0) {
             taskNode.querySelector(".tooltip .custom span").innerHTML = task.tooltip;
             taskNode.querySelector(".tooltip .custom").style.display = null;
         }
-        taskNode.querySelector(".button.click").onclick = (e) => { queueTask(e, task.id); e.stopPropagation();}
-        taskNode.querySelector(".button.click").oncontextmenu = (e) => { queueTask(e, task.id); e.stopPropagation();}
-        taskNode.querySelector(".button.all").onclick = (e) => { queueTask(e, task.id, Number.POSITIVE_INFINITY); e.stopPropagation();}
-        taskNode.querySelector(".button.all").oncontextmenu = (e) => { queueTask(e, task.id, Number.POSITIVE_INFINITY); e.stopPropagation();}
+        taskNode.querySelector(".button.click").onclick =
+            (e) => { queueTask(e, task.id); e.stopPropagation(); }
+        taskNode.querySelector(".button.click").oncontextmenu =
+            (e) => { queueTask(e, task.id); e.stopPropagation(); e.preventDefault(); }
+        taskNode.querySelector(".button.all").onclick =
+            (e) => { queueTask(e, task.id, Number.POSITIVE_INFINITY);
+                e.stopPropagation(); }
+        taskNode.querySelector(".button.all").oncontextmenu =
+            (e) => { queueTask(e, task.id, Number.POSITIVE_INFINITY);
+                e.stopPropagation(); e.preventDefault(); }
     }
     let fill = task.progress/task.baseDuration;
     taskNode.querySelector('.bar .fill').style = "width: " + fill*100+"%";
@@ -393,4 +399,14 @@ function exitEvent() {
     document.getElementById("popup_group").style.display = 'none';
     if (typeof(game.currentEvent?.onExit) == "function")
         game.currentEvent.onExit();
+}
+
+function bodyOnContextMenu(event) {
+    if (!(typeof window.getSelection != "undefined"
+            && !!window.getSelection().toString())
+        && typeof document.selection == "undefined")
+    {
+        hideDescription();
+        event.preventDefault();
+    }
 }
