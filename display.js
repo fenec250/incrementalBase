@@ -333,6 +333,58 @@ function handleDescriptionEvent(event) {
     }
 }
 
+function createObjectiveObjects() {
+    const objectivesDiv = document.getElementById("objectives_container");
+    objectivesDiv.innerHTML = "";
+    const objectiveTemplate = document.getElementById("objective_template");
+    const orderedObjectives = Object.entries(game.objectives)
+        .map(([,o]) => o)
+        .sort((a,b) => a.order > b.order);
+    for (let objective of orderedObjectives) {
+        let node = objectiveTemplate.cloneNode(true);
+        objectivesDiv.appendChild(node);
+        node.id = "o_"+objective.id;
+        node.querySelector('.text').innerHTML = objective.text;
+        if (!!objective.tooltip) {
+            node.querySelector('.tooltip').style.display = ""
+            node.querySelector('.tooltip').innerHTML = objective.tooltip;
+        }
+        if (!!objective.description||!!objective.mechanics||!!objective.image) {
+            let descrNode = document.getElementById("item_description_template").cloneNode(true);
+            descrNode.id = "od_"+objective.id;
+            document.querySelector("#description_container div").appendChild(descrNode);
+            if (!!objective.description) {
+                descrNode.querySelector(".description").innerHTML = objective.description;
+            }
+            if (!!objective.mechanics) {
+                descrNode.querySelector('.mechanics').innerHTML = objective.mechanics;
+            }
+            if (!!objective.image) {
+                descrNode.querySelector('.image').style.display = ""
+                descrNode.querySelector('.image').src = objective.image;
+            }
+        }
+    }
+}
+
+function updateObjectiveObjects() {
+    const orderedObjectives = Object.entries(game.objectives)
+        .map(([,o]) => o)
+        .sort((a,b) => a.order > b.order);
+    for (let objective of orderedObjectives) {
+        let node = document.getElementById("o_"+objective.id);
+        let descrNode = document.getElementById("od_"+objective.id);
+        if (!objective.isEnabled()) {
+            node.style.display = "none";
+            //if (!!descrNode)
+            //    descrNode.style.display = "none";
+            continue;
+        }
+        node.style.display = "";
+        objective.onDisplay(node, descrNode);
+    }
+}
+
 function showObjectives() {
     const objectivesDiv = document.getElementById("objectives_container");
     objectivesDiv.innerHTML = "";

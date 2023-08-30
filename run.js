@@ -40,7 +40,7 @@ function run(taskId, times=1, stopEarly=false) {
     showTop();
     showStats();
     showTasks();
-    showObjectives();
+    updateObjectiveObjects();
     // if game.plan.lehgth > 0 game.currentTask = plan.un/shift() and re run()?
     runLock = false;
 }
@@ -165,5 +165,5 @@ function reset() {
     showStats();
     showEvents();
     showTasks();
-    showObjectives()
+    updateObjectiveObjects();
 }

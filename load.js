@@ -84,7 +84,7 @@ function loadTaskGroup(id) {
     showTop();
     showEvents();
     showTasks();
-    showObjectives();
+    createObjectiveObjects(); updateObjectiveObjects();
 
     if (typeof(taskGroup.onLoad) == 'function')
         taskGroup.onLoad();
@@ -215,5 +215,5 @@ function load(id='quickSave') {
     showStats();
     showEvents();
     showTasks();
-    showObjectives();
+    createObjectiveObjects(); updateObjectiveObjects();
 }
