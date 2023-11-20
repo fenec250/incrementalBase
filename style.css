@@ -1,9 +1,4 @@
 :root {
-    --color-det: hsl(240, 25%, 50%);
-    --color-det-light: hsl(240, 25%, 65%);
-    --color-cycle: hsl(300, 24%, 50%);
-    --color-cycle-light: hsl(300, 25%, 65%);
-    --color-run: hsl(51, 100%, 50%);
     --color-background: #272727;
     --color-background-over-image: #272727a0;
 }
@@ -130,7 +125,7 @@ body {
     height: 1.5em;
     position: relative;
 }
-#determination .text, #cycle .text{
+/* #determination .text, #cycle .text{
     height: 100%;
     width: 100%;
     justify-content: center;
@@ -146,7 +141,7 @@ body {
 }
 #cycle .fill{
     background: var(--color-cycle)
-}
+} */
 
 #recap {
     display: flex;
@@ -219,11 +214,15 @@ body {
     align-items: center;
 }
 .task .text .icons {
-    width: 1ch;
+    display: flex;
+    align-items: center;
 }
 .task .text .title {
     flex-grow: 1;
     flex-shrink: 1;
+    overflow-y: hidden;
+    text-overflow: "|";
+    white-space: nowrap;
 }
 .task .text .max {
     font-size: 14px;

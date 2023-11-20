@@ -115,7 +115,7 @@ function loadTask ([id,{
     order = 1000,
     baseDuration = 0.0, // 1 = 1 hour, accelerated by stats
     statsScaling = [], // [["stat", power:1.0, expWeigth:1.0], ...]
-    tags = [],
+    tags, // defaults to statScaling items
     boost = 0, // speed level modifier. +64 => x2.0
     getSpeedLevel = () => taskSpeedLevel(id), // {this task} => speed
     isEnabled = () => true, // {context} => should show up
@@ -124,10 +124,11 @@ function loadTask ([id,{
 }]) {
     return ({
     id, title, description, tooltip, image,
-    order, baseDuration, tags, boost,
+    order, baseDuration, boost,
     getSpeedLevel, isEnabled, onCompletion, maxCompletion,
     statsScaling:statsScaling.map(([s, p=1, e]) =>
     [s, p, typeof(e) === 'undefined' ? p : +e]),
+    tags: tags || statsScaling.map(([s]) => s),
     progress:0,
     });
 }

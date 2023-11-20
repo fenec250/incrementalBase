@@ -122,6 +122,7 @@ function showStats() {
             n.querySelector(".amount").innerHTML = stat.storedExp.toPrecision(3);
         })
 
+        statNode.querySelector(".icon").classList.add(stat.id);
         statNode.querySelector(".title").innerHTML = stat.title;
         statNode.querySelector(".speed").innerHTML = stat.speed.toPrecision(3);
     }
@@ -228,8 +229,10 @@ function showTaskBase(task, taskNode, init=false, progress=0) {
 
     if (task.tags.length > 0) {
         taskNode.querySelector(".text .icons").style.display = "";
-        taskNode.querySelector(".text .icons").innerHTML =
-        task.tags.reduce((a,b)=>a+b); // todo: translate via taskGroup
+        taskNode.querySelector(".text .icons").innerHTML = task.tags
+            .map((tag) => `<span class="icon ${tag}"></span>`)
+            .reduce((accum, span) => accum+span);
+        // todo: translate via taskGroup
     }
     else
         taskNode.querySelector(".text .icons").style.display = "none";
