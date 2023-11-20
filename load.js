@@ -84,7 +84,7 @@ function loadTaskGroup(id) {
     showTop();
     showEvents();
     showTasks();
-    createObjectiveObjects(); updateObjectiveObjects();
+    createObjectiveObjects();
 
     if (typeof(taskGroup.onLoad) == 'function')
         taskGroup.onLoad();

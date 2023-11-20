@@ -1,5 +1,5 @@
-const TTC_CORRECTION = Number.EPSILON * 100
-const STOP_EARLY = TTC_CORRECTION * 100
+const TTC_CORRECTION = Number.EPSILON * 10000
+const STOP_EARLY = TTC_CORRECTION * 10
 
 var runLock = false;
 function run(taskId, times=1, stopEarly=false) {
@@ -22,6 +22,7 @@ function run(taskId, times=1, stopEarly=false) {
         game.timeLeft
         )-(stopEarly?STOP_EARLY:0), 0);
     // console.log(timeToComplete, game.timeLeft);
+    // console.log('diff',timeToComplete * game.currentTask.speed,(game.currentTask.baseDuration*times - game.currentTask.progress),timeToComplete * game.currentTask.speed - (game.currentTask.baseDuration*times - game.currentTask.progress))
     
     if (!!game.currentTask) {
         runTask(game.currentTask, timeToComplete, stopEarly);

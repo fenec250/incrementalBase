@@ -1,13 +1,21 @@
 
 
 
-- events div/popup
 
+
+- events div/popup
 - icons
 - better UI cleanup than remaking it every time?
 - automation/plan system
-- generation recap
+- improve generation recap
+|- saveable recap object, recap history
+\- recap tooltip?
 - rename taskGroup (contentSource? content?)
 - move Top and Recap stuff to content?
-- "defeat" scenes
+- continue "defeat" scenes
 - change background/style depending on area
+- inspect image
+- try removing tooltips
+- improve Orgasm preview
+- bloodline breeding levels?
+\- show/hide stat system?

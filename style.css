@@ -87,7 +87,7 @@ body {
     /* margin-left: min(-17.5em, -25%); */
     opacity: 0;
     font-size: 14px;
-    transition: opacity 0.3s;
+    transition: opacity 0s;
     z-index: 2; /* show over regular elements */
     pointer-events: none /* let clicks trough */
 }
@@ -103,6 +103,7 @@ body {
 }
 *:hover > .tooltip {
     visibility: visible;
+    transition: opacity 0.3s linear 1s;
     /* display: unset; */
     opacity: 1;
 }
