@@ -347,7 +347,17 @@ function createObjectiveObjects() {
         let node = objectiveTemplate.cloneNode(true);
         objectivesDiv.appendChild(node);
         node.id = "o_"+objective.id;
-        node.querySelector('.text').innerHTML = objective.text;
+        node.querySelector('.text .title').innerHTML = objective.text;
+        if (objective.tags.length > 0) {
+            node.querySelector(".text .icons").style.display = "";
+            node.querySelector(".text .icons").innerHTML = objective.tags
+                .map((tag) => `<span class="icon ${tag}"></span>`)
+                .reduce((accum, span) => accum+span);
+            // todo: translate via taskGroup?
+        }
+        else
+            node.querySelector(".text .icons").style.display = "none";
+
         if (!!objective.tooltip) {
             node.querySelector('.tooltip').style.display = ""
             node.querySelector('.tooltip').innerHTML = objective.tooltip;

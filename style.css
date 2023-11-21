@@ -205,20 +205,11 @@ body {
     /* bottom: 1em; */
     /* left: 2em; */
 }
-.task .text {
-    width: 100%;
-    padding-inline: .15em;
-    box-sizing: border-box;
-    gap: .3em;
-    display: flex;
-    justify-content: right;
-    align-items: center;
-}
-.task .text .icons {
+.text .icons {
     display: flex;
     align-items: center;
 }
-.task .text .title {
+.text .title {
     flex-grow: 1;
     flex-shrink: 1;
     overflow-y: hidden;
