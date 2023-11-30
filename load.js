@@ -12,7 +12,7 @@ var game = {
     currentTask: null,
     timeLeft: 1.0,
     cycleLength: 1,
-    cycle: 0,
+    cycle: 1,
     generation: 0,
     taskGroup: {}, // the current area/set of tasks
     
@@ -148,7 +148,6 @@ function loadObjective([id, {
     tags = [],
     order = 1000,
     isEnabled = () => true, // () => should show up
-    onProgress = time => 0, // time => do things
     onCycle = () => true, // () => do things
     onDisplay = node => true, // () => do things
     custom,
@@ -157,7 +156,7 @@ function loadObjective([id, {
     id, order, tags, image, tooltip, mechanics,
     text:text || title || "",
     description:description || "",
-    isEnabled, onProgress, onCycle, onDisplay,
+    isEnabled, onCycle, onDisplay,
     custom:{...custom},
     });
 }

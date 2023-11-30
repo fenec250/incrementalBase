@@ -29,9 +29,6 @@ function run(taskId, times=1, stopEarly=false) {
         //storeExp(game.currentTask.statsScaling, timeToComplete * game.currentTask.speed);
     }
 
-    Object.values(game.objectives).filter(d => d.isEnabled())
-        .forEach(d => d.onProgress(timeToComplete))
-
     // cycle check
     game.timeLeft -= timeToComplete;
     if (game.timeLeft <= 0) {
@@ -140,7 +137,7 @@ function reset() {
         
         currentTask: null,
         taskGroup: {}, // the current area/set of tasks
-        cycle:0,
+        cycle:1,
         timeLeft: 100.0,
         cycleLength: 100,
         summary: {
