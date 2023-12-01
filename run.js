@@ -1,75 +1,41 @@
 const TTC_CORRECTION = Number.EPSILON * 10000
 const STOP_EARLY = TTC_CORRECTION * 10
 
+
 var runLock = false;
 function run(taskId, times=1, stopEarly=false) {
     if (runLock) return;
     runLock = true;
 
-    if (!!taskId) game.currentTask = game.tasks[taskId]
+    let task = game.tasks[taskId];
+    times = Math.min(times, task.maxCompletion());
+    let duration = (task.baseDuration*times - task.progress) / task.speed
 
-    if (times > 1) {
-        times = Math.min(times, game.currentTask.maxCompletion())
-    }
-
-    // run active task
-    const timeToComplete = Math.max(Math.min(
-        // ...tasksToRun.map(task =>
-        //     (task.baseDuration - task.progress) / task.speed),
-        game.currentTask.baseDuration == 0 ? 0 : Number.POSITIVE_INFINITY,
-        (game.currentTask.baseDuration*times - game.currentTask.progress)
-            / game.currentTask.speed + TTC_CORRECTION,
-        game.timeLeft
-        )-(stopEarly?STOP_EARLY:0), 0);
-    // console.log(timeToComplete, game.timeLeft);
-    // console.log('diff',timeToComplete * game.currentTask.speed,(game.currentTask.baseDuration*times - game.currentTask.progress),timeToComplete * game.currentTask.speed - (game.currentTask.baseDuration*times - game.currentTask.progress))
-    
-    if (!!game.currentTask) {
-        runTask(game.currentTask, timeToComplete, stopEarly);
-        //storeExp(game.currentTask.statsScaling, timeToComplete * game.currentTask.speed);
-    }
-
-    // cycle check
-    game.timeLeft -= timeToComplete;
-    if (game.timeLeft <= 0) {
-        endCycle()
+    if (duration >= game.timeLeft) {
+        runForDuration(task, game.timeLeft - (stopEarly?1:0))
+    } else {
+        runForProgress(task, task.baseDuration*times - task.progress
+            - (stopEarly?1:0)); // task.speed*STOP_EARLY?
     }
 
     showTop();
     showStats();
     showTasks();
     updateObjectiveObjects();
-    // if game.plan.lehgth > 0 game.currentTask = plan.un/shift() and re run()?
+
     runLock = false;
 }
 
-function runTask(task, duration, stopEarly) {
-    if (task.baseDuration <= 0) {
-        if (task.hasOwnProperty("onCompletion") && !stopEarly)
-            task.onCompletion();
-        return;
-    }
-    let remaining = duration;
-    //console.log(task.id, progress, task.speed, timeToComplete)
-    while (remaining * task.speed >= task.baseDuration - task.progress) {
-        remaining -= (task.baseDuration - task.progress)/task.speed
-        //console.log(task.baseDuration - task.progress)
-        //progress -= task.baseDuration - task.progress;
-        storeExp(task.statsScaling, task.baseDuration - task.progress);
-        task.progress = 0;
-        if (task.hasOwnProperty("onCompletion")) task.onCompletion();
-    }
-    task.progress += remaining * task.speed;
-    storeExp(task.statsScaling, remaining * task.speed);
-
-    // update summary
-    let involvedStats = task.statsScaling.filter(([,p]) => p > 0).map(([id])=>id);
-    for (id of involvedStats) {
-        game.summary.cyclesSpent[id] += duration/involvedStats.length;
+function advanceTime(time) {
+    game.timeLeft -= time
+    //recordStep(task, remaining - leftover)
+    if (game.timeLeft <= 0) {
+        endCycle();
     }
 }
 
 function endCycle() {
+    //console.log("endCycle")
     // apply stored exp
     for (let s of Object.values(game.stats)) {
         s.exp += s.storedExp;
@@ -91,16 +57,97 @@ function endCycle() {
     game.determination.amount -= game.determination.decay;
     Object.values(game.objectives).filter(d => d.isEnabled())
         .forEach(d => d.onCycle());
-    if (game.determination.amount < 0) {
-        showRecap();
-        reset();
-    }
     // refresh data of displayable
     Object.keys(game.tasks).forEach(key => refreshTaskSpeed(game.tasks[key]))
     Object.values(game.stats).forEach(s => s.speed = speed(s.level + s.genLevel*4))
     // set up next period
     game.timeLeft = game.cycleLength;
     game.cycle += 1;
+}
+
+// Run for a certain duration, within the current cycle
+function runForDuration(task, requestedDuration) {
+    //console.log(game.cycle, game.timeLeft, "run for duration", task.id, requestedDuration);
+    let progressTime = Math.min(requestedDuration, game.timeLeft);
+    let remainingTime = Math.max(requestedDuration - game.timeLeft, 0);
+    let progress = task.speed*progressTime;
+    let speed = task.speed; // some tasks change speed after being completed
+    let leftover = progressTask(task, progress);
+    remainingTime += (leftover/speed)>>0
+    game.timeLeft = remainingTime;
+    recordStep(task, progress - leftover)
+    if (game.timeLeft <= 0) {
+        endCycle();
+    }
+    tryEndGeneration();
+}
+
+// Run for a certain amount of progress, across multiple Cycles if needed
+function runForProgress(task, maxProgress) {
+    //console.log(game.cycle, game.timeLeft, "run for progress", task.id, maxProgress);
+    let remaining = maxProgress;
+    let leftover = 0;
+    let speed = task.speed;
+    while (remaining > speed*game.timeLeft && leftover == 0) {
+        let progress = speed*game.timeLeft;
+        leftover = progressTask(task, progress);
+        remaining -= progress - leftover;
+        game.timeLeft = (leftover/speed)>>0;
+        speed = task.speed;
+        recordStep(task, progress - leftover)
+        endCycle();
+        if (tryEndGeneration()) {
+            return;
+        }
+    }
+    if (!leftover) {
+        leftover = progressTask(task, remaining);
+        game.timeLeft = (game.timeLeft + (leftover - remaining)/speed)>>0;
+        recordStep(task, remaining - leftover)
+        if (game.timeLeft <= 0) {
+            endCycle();
+            tryEndGeneration();
+        }
+    }
+}
+
+function progressTask(task, progress) {
+    //console.log("progressing:",task.id, progress)
+    if (progress < 0) return 0;
+    if (task.baseDuration <= 0) {
+        if (task.hasOwnProperty("onCompletion")){
+            task.onCompletion();
+            //recordStep(task, 0);
+        }
+        return progress;
+    }
+    let remaining = progress;
+    while (remaining >= task.baseDuration - task.progress && task.maxCompletion() > 0) {
+        remaining -= task.baseDuration - task.progress
+        storeExp(task.statsScaling, task.baseDuration - task.progress);
+        //recordStep(task, task.baseDuration - task.progress);
+        task.progress = 0;
+        task.onCompletion();
+    }
+    if (task.maxCompletion() > 0) {
+        task.progress += remaining;
+        storeExp(task.statsScaling, remaining);
+        //recordStep(task, remaining);
+        return 0;
+    } else {
+        //console.log("remaining:", remaining)
+        return remaining;
+    }
+}
+
+function tryEndGeneration() {
+    if (game.determination.amount < 0) {
+        // possibility to defer end check to Content?
+        showRecap();
+        reset();
+        return true;
+    }
+    return false;
 }
 
 function storeExp(statsScaling, exp) {
@@ -137,7 +184,7 @@ function reset() {
         
         currentTask: null,
         taskGroup: {}, // the current area/set of tasks
-        cycle:1,
+        cycle:0,
         timeLeft: 100.0,
         cycleLength: 100,
         summary: {
@@ -146,6 +193,7 @@ function reset() {
             startingStats: Object.fromEntries(
                 Object.values(game.stats).map(s => [s.id, structuredClone(s)])),
         },
+        history: [],
 
         //longPlan: [], // potato: [[{},... tasks for hour],...]
     }

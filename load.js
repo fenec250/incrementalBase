@@ -8,11 +8,13 @@ var game = {
 
     persistent: {},
     summary: {cyclesSpent:{}, startingStats:{}, },
+    history: [], // [[{taskId, progress, endTimeLeft},... cycle 1 tasks],[{}, ... cycle 2...]]
+    plan: [], // same structure as history
     
     currentTask: null,
     timeLeft: 1.0,
     cycleLength: 1,
-    cycle: 1,
+    cycle: 0,
     generation: 0,
     taskGroup: {}, // the current area/set of tasks
     
@@ -117,18 +119,21 @@ function loadTask ([id,{
     statsScaling = [], // [["stat", power:1.0, expWeigth:1.0], ...]
     tags, // defaults to statScaling items
     boost = 0, // speed level modifier. +64 => x2.0
+    forceDistinct = false,
     getSpeedLevel = () => taskSpeedLevel(id), // {this task} => speed
     isEnabled = () => true, // {context} => should show up
     onCompletion = () => true, // {context} => can be completed
-    maxCompletion = task => Number.POSITIVE_INFINITY, // this => max that can be completed
+    maxCompletion,// = task => , // this => max that can be completed
 }]) {
     return ({
     id, title, description, tooltip, image,
-    order, baseDuration, boost,
-    getSpeedLevel, isEnabled, onCompletion, maxCompletion,
+    order, baseDuration, boost, forceDistinct,
+    getSpeedLevel, isEnabled, onCompletion,
     statsScaling:statsScaling.map(([s, p=1, e]) =>
     [s, p, typeof(e) === 'undefined' ? p : +e]),
     tags: tags || statsScaling.map(([s]) => s),
+    maxCompletion: typeof(maxCompletion) === 'function' ? maxCompletion
+        : !!forceDistinct ? task=>1 : task=>Number.POSITIVE_INFINITY,
     progress:0,
     });
 }
@@ -171,6 +176,8 @@ function save(id='quickSave') {
         persistent: game.persistent,
         generation: game.generation,
         summary: game.summary,
+        history: game.history,
+        plan: game.plan,
         
         currentTask: game.currentTask?.id,
         timeLeft: game.timeLeft,

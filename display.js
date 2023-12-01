@@ -251,7 +251,7 @@ function showTaskBase(task, taskNode, init=false, progress=0) {
             hint += 'x' + ((completionsLeft > 1000 || completionsLeft%1>0)
                 ? completionsLeft.toPrecision(2)
                 : completionsLeft);
-            hint += '|' + (100-game.timeLeft + (maxCompletion*task.baseDuration - task.progress)/task.speed).toFixed(0)
+            hint += '|' + Math.ceil(100-game.timeLeft + (maxCompletion*task.baseDuration - task.progress)/task.speed).toFixed(0)
         } else {
             hint += 'x' + ((multiCompletion > 1000 || multiCompletion%1>0)
                 ? multiCompletion.toPrecision(2)

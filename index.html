@@ -106,6 +106,8 @@
         <input type="text"/>
         <button onclick="save(document.querySelector('#save_panel input').value)">Save</button>
         <button onclick="load(document.querySelector('#save_panel input').value)">Load</button>
+        <button onclick="saveCheckpoint()">Save Checkpoint</button>
+        <button onclick="if (game.cycle == 0 && game.timeLeft == game.cycleLength) replaySteps(game.plan)">Go to Checkpoint</button>
       </div>
 
       <!-- <div id="plan_panel" class="panel">
@@ -227,6 +229,7 @@
     <script type="text/javascript" src="util.js"></script>
     <script type="text/javascript" src="display.js"></script>
     <script type="text/javascript" src="load.js"></script>
+    <script type="text/javascript" src="automation.js"></script>
     <script type="text/javascript" src="run.js"></script>
     <!-- Content -->
     <!-- <script type="text/javascript" src="Test.js"></script> -->
