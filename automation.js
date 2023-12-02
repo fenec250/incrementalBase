@@ -9,6 +9,14 @@ function recordStep(task, progress, forceDistinct) {
         || !last
         || last.taskId != task.id
     //console.log("recording:", task.id, progress, distinct);
+    let involvedStats = task.statsScaling
+        .filter(([,p]) => p > 0)
+        .map(([id])=>id);
+    let distributedDuration = ((!last ? game.cycleLength : last.endTimeLeft) - game.timeLeft)/involvedStats.length;
+    involvedStats.forEach(id => {
+            game.summary.cyclesSpent[id] += distributedDuration;
+        });
+
     if (!distinct) {
         last.progress += progress;
         last.endTimeLeft = game.timeLeft;
@@ -32,6 +40,10 @@ function replaySteps(cyclesHistory) {
             let remaining = step.progress;
             //console.log("Running step:", step, remaining);
             remaining = runForProgress(task, remaining);
+            showTop();
+            showStats();
+            showTasks();
+            updateObjectiveObjects();
         })
         if (i < cyclesHistory.length-1 && i == game.cycle) {
             //console.log("Closing cycle:", game.cycle, game.timeLeft);
