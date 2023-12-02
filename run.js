@@ -22,6 +22,7 @@ function run(taskId, times=1, stopEarly=false) {
     showStats();
     showTasks();
     updateObjectiveObjects();
+    updateCheckpointButtons();
 
     runLock = false;
 }
@@ -216,4 +217,5 @@ function reset() {
     showEvents();
     showTasks();
     updateObjectiveObjects();
+    updateCheckpointButtons();
 }

@@ -476,3 +476,9 @@ function bodyOnContextMenu(event) {
         event.preventDefault();
     }
 }
+
+function updateCheckpointButtons() {
+    // minimal implementation
+    document.getElementById("save_panel").children[5].disabled =
+        !!game.cycle || game.timeLeft!=game.cycleLength;
+}

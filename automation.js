@@ -40,8 +40,6 @@ function replaySteps(cyclesHistory) {
             let remaining = step.progress;
             //console.log("Running step:", step, remaining);
             remaining = runForProgress(task, remaining);
-            showTop();
-            showStats();
             showTasks();
             updateObjectiveObjects();
         })
@@ -56,6 +54,7 @@ function replaySteps(cyclesHistory) {
     showStats();
     showTasks();
     updateObjectiveObjects();
+    updateCheckpointButtons();
 }
 
 function saveCheckpoint() {

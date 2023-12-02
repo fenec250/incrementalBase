@@ -223,4 +223,5 @@ function load(id='quickSave') {
     showEvents();
     showTasks();
     createObjectiveObjects(); updateObjectiveObjects();
+    updateCheckpointButtons();
 }
