@@ -134,16 +134,16 @@ function loadTask ([id,{
     tags: tags || statsScaling.map(([s]) => s),
     maxCompletion: typeof(maxCompletion) === 'function' ? maxCompletion
         : !!forceDistinct ? task=>1 : task=>Number.POSITIVE_INFINITY,
-    progress:0,
+    progress:0, unclaimedProgress:0
     });
 }
 
 function stripTask({
-    id, baseDuration, boost, progress,
+    id, baseDuration, boost, progress, unclaimedProgress
 }) {
     baseDuration = isFinite(baseDuration) ? baseDuration : undefined;
     return {
-        id, boost, progress, baseDuration,
+        id, boost, progress, baseDuration, unclaimedProgress
     };
 }
 

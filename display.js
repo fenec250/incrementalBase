@@ -195,7 +195,8 @@ function showTasks() {
             }
         }
 
-        showTaskBase(task, taskNode, init, game.timeLeft*task.speed/task.baseDuration);
+        showTaskBase(task, taskNode, init,
+            (game.timeLeft*task.speed)/task.baseDuration);
         showTaskTooltip(task, taskNode, init);
 
         descrNode.querySelector(".mechanics").innerHTML = taskNode.querySelector(".mechanics").innerHTML;
@@ -241,7 +242,7 @@ function showTaskBase(task, taskNode, init=false, progress=0) {
     taskNode.querySelector(".button.click").disabled = maxCompletion <= 0;
     taskNode.querySelector(".button.all").disabled = maxCompletion <= 0;
     if (maxCompletion > 0 && Number.isFinite(maxCompletion)) {
-        let multiCompletion = (game.timeLeft*task.speed)/task.baseDuration;
+        let multiCompletion = (game.timeLeft*task.speed + task.unclaimedProgress)/task.baseDuration;
         let completionsLeft = maxCompletion - task.progress/task.baseDuration;
         let hint = '';
         if (!isFinite(multiCompletion)
@@ -251,7 +252,7 @@ function showTaskBase(task, taskNode, init=false, progress=0) {
             hint += 'x' + ((completionsLeft > 1000 || completionsLeft%1>0)
                 ? completionsLeft.toPrecision(2)
                 : completionsLeft);
-            hint += '|' + Math.ceil(100-game.timeLeft + (maxCompletion*task.baseDuration - task.progress)/task.speed).toFixed(0)
+            hint += '|' + Math.ceil(100-game.timeLeft + (maxCompletion*task.baseDuration - task.progress - task.unclaimedProgress)/task.speed).toFixed(0)
         } else {
             hint += 'x' + ((multiCompletion > 1000 || multiCompletion%1>0)
                 ? multiCompletion.toPrecision(2)

@@ -72,8 +72,9 @@ function runForDuration(task, requestedDuration) {
     let remainingTime = Math.max(requestedDuration - game.timeLeft, 0);
     let progress = task.speed*progressTime;
     let speed = task.speed; // some tasks change speed after being completed
-    let leftover = progressTask(task, progress);
+    let leftover = progressTask(task, progress + task.unclaimedProgress);
     remainingTime += (leftover/speed)>>0
+    task.unclaimedProgress = leftover%speed
     game.timeLeft = remainingTime;
     recordStep(task, progress - leftover)
     if (game.timeLeft <= 0) {
@@ -88,11 +89,13 @@ function runForProgress(task, maxProgress) {
     let remaining = maxProgress;
     let leftover = 0;
     let speed = task.speed;
-    while (remaining > speed*game.timeLeft && leftover == 0) {
-        let progress = speed*game.timeLeft;
+    while (remaining > speed*game.timeLeft + task.unclaimedProgress
+            && leftover == 0) {
+        let progress = speed*game.timeLeft + task.unclaimedProgress;
         leftover = progressTask(task, progress);
         remaining -= progress - leftover;
         game.timeLeft = (leftover/speed)>>0;
+        task.unclaimedProgress = leftover%speed
         speed = task.speed;
         recordStep(task, progress - leftover)
         endCycle();
@@ -102,7 +105,8 @@ function runForProgress(task, maxProgress) {
     }
     if (!leftover) {
         leftover = progressTask(task, remaining);
-        game.timeLeft = (game.timeLeft + (leftover - remaining)/speed)>>0;
+        game.timeLeft -= Math.ceil((remaining - leftover - task.unclaimedProgress)/speed);
+        task.unclaimedProgress = speed-(remaining - leftover - task.unclaimedProgress)%speed
         recordStep(task, remaining - leftover)
         if (game.timeLeft <= 0) {
             endCycle();
