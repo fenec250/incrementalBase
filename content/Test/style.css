@@ -1,0 +1,57 @@
+:root {
+    --color-det: hwb(128 38% 38%);
+    --color-det-light: hsl(128, 25%, 65%);
+    --color-cycle: hsl(32, 24%, 50%);
+    --color-cycle-light: hsl(32, 25%, 65%);
+}
+
+#determination .text, #cycle .text{
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+}
+#determination .negative{
+    background: var(--color-cycle);
+}
+#determination .fill{
+    background: var(--color-det);
+}
+#determination .decay{
+    background: var(--color-det-light);
+}
+#cycle .fill{
+    background: var(--color-cycle)
+}
+/* .task .bar .fill {
+    background: var(--color-det);
+}
+.task .bar .prog{
+    background: var(--color-det-light);
+}
+.objective .bar .fill {
+    background: var(--color-cycle);
+}
+.objective .bar .prog {
+    background: var(--color-cycle-light);
+} */
+.gen .fill{
+    background: var(--color-det);
+}
+.gen .sto{
+    background: var(--color-det-light);
+}
+.inst .fill{
+    background: var(--color-cycle);
+}
+.inst .sto{
+    background: var(--color-cycle-light);
+}
+
+
+.icon.stat1, .icon.stat2, .icon.stat3 {
+    background-image: url("icon.png");
+}
+.icon {
+    width: 20px;
+    height: 20px;
+}
